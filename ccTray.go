@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -57,12 +58,17 @@ func (c ccTray) GetLatest() {
 func (c ccTray) publishChanges(projects []Project) {
 	for _, current := range projects {
 		if prev, ok := c.previous[current.Name]; ok {
+			fmt.Printf("found %v\n", current)
 			if prev != current {
 				c.previous[current.Name] = current
 				c.Ch <- current
 			}
 		} else {
+			fmt.Printf("not found %v\n", current)
 			c.previous[current.Name] = current
 		}
 	}
+	fmt.Println("\npub loop complete")
+	// everything is ok, finished looping - looks hacky to me but another channel, really?
+	c.ChErr <- nil
 }

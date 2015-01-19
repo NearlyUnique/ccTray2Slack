@@ -35,12 +35,10 @@ func main() {
 
 	select {
 	case p := <-cc.Ch:
-		PostSlackMessage(
-			*slackUrl,
-			fmt.Sprintf(
-				"%q was %q at %v, <%s|Visit Page>",
-				p.Name, p.LastBuildStatus, p.LastBuildTime, p.WebUrl)
-			)
+		msg := fmt.Sprintf(
+			"%q was %q at %v, <%s|Visit Page>",
+			p.Name, p.LastBuildStatus, p.LastBuildTime, p.WebUrl)
+		PostSlackMessage(*slackUrl, msg)
 	case e := <-cc.ChErr:
 		log.Fatalf("Failed to get ccTray Data \n%v\n", e)
 	}
