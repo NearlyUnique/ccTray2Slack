@@ -1,0 +1,1 @@
+del ccTray2Slack.exe & cls & go build & ccTray2Slack.exe -url http://localhost/ccTray.xml -config watch.json

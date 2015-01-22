@@ -1,0 +1,14 @@
+{
+	"watches" : [
+		{
+			"tag": "^xProject.*?Fast$",
+			"slackUrl": "https://hooks.slack.com/services/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",
+			"slackMsg": {
+				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+				"username": "GoBotGo",
+				"icon_url": "http://fc01.deviantart.net/fs70/f/2009/348/2/0/Norton_Ghost_by_jakaneko.png",
+				"channel": "#random"
+			}
+		}
+	]
+}

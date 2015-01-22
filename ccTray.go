@@ -4,15 +4,17 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
 type (
 	ccTray struct {
-		Url      string
-		Ch       chan Project
-		ChErr    chan error
-		previous map[string]Project
+		Url         string
+		Ch          chan Project
+		ChErr       chan error
+		interesting []string
+		previous    map[string]Project
 	}
 )
 
@@ -31,6 +33,17 @@ type (
 	}
 )
 
+func (p Project) String() string {
+	return fmt.Sprintf(
+		"name=%s, activity=%s, status=%s, label=%s, time=%v, url=%s",
+		p.Name,
+		p.Activity,
+		p.LastBuildStatus,
+		p.LastBuildLabel,
+		p.LastBuildTime,
+		p.WebUrl)
+}
+
 func CreateCcTray(url string) ccTray {
 	return ccTray{
 		Url:      url,
@@ -40,35 +53,36 @@ func CreateCcTray(url string) ccTray {
 	}
 }
 
-func (c ccTray) GetLatest() {
-	var e error
-	if resp, e := http.Get(c.Url); e == nil {
+func (cc ccTray) GetLatest() {
+	var err error
+	if resp, err := http.Get(cc.Url); err == nil {
 		defer resp.Body.Close()
 
-		if body, e := ioutil.ReadAll(resp.Body); e == nil {
+		if body, err := ioutil.ReadAll(resp.Body); err == nil {
 			p := Projects{}
 			xml.Unmarshal(body, &p)
-			c.publishChanges(p.Projects)
+			cc.publishChanges(p.Projects)
 			return
 		}
 	}
-	c.ChErr <- e
+	cc.ChErr <- err
 }
 
-func (c ccTray) publishChanges(projects []Project) {
+func (cc ccTray) publishChanges(projects []Project) {
 	for _, current := range projects {
-		if prev, ok := c.previous[current.Name]; ok {
-			fmt.Printf("found %v\n", current)
+		if prev, ok := cc.previous[current.Name]; ok {
 			if prev != current {
-				c.previous[current.Name] = current
-				c.Ch <- current
+				log.Printf("Replacing %q\n", current.Name)
+				cc.previous[current.Name] = current
+				cc.Ch <- current
+			} else {
+				log.Printf("No Change %q\n", current.Name)
 			}
 		} else {
-			fmt.Printf("not found %v\n", current)
-			c.previous[current.Name] = current
+			log.Printf("Adding    %q\n", current.Name)
+			cc.previous[current.Name] = current
 		}
 	}
-	fmt.Println("\npub loop complete")
 	// everything is ok, finished looping - looks hacky to me but another channel, really?
-	c.ChErr <- nil
+	cc.ChErr <- nil
 }
