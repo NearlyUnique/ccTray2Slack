@@ -1,7 +1,7 @@
 {
 	"watches" : [
 		{
-			"tag": "^xProject.*?Fast$",
+			"tag": "^[Hh]ome-web.*?[Bb]uild$",
 			"slackUrl": "https://hooks.slack.com/services/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",
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",

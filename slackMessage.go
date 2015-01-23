@@ -34,27 +34,29 @@ func (s *SlackMessage) UpdateMessage(p Project) {
 }
 
 func (s *SlackMessage) PostSlackMessage(url string) error {
-	log.Printf("%q\n%v\n", url, &s)
+	if url == "debug" {
+		log.Printf("%q\n%v\n", url, &s)
+	} else {
+		jsonStr, _ := json.Marshal(&s)
+		req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+		if err != nil {
+			return err
+		}
+		req.Header.Set("Content-Type", "application/json")
 
-	// jsonStr, _ := json.Marshal(&s)
-	// req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
-	// if err != nil {
-	// 	return err
-	// }
-	// req.Header.Set("Content-Type", "application/json")
+		client := &http.Client{}
 
-	// client := &http.Client{}
+		if resp, err := client.Do(req); err == nil {
+			defer resp.Body.Close()
 
-	// if resp, err := client.Do(req); err == nil {
-	// 	defer resp.Body.Close()
+			if body, err := ioutil.ReadAll(resp.Body); err != nil {
+				log.Printf("Err:%v\nBody: %s\n", err, body)
+				return err
+			}
 
-	// 	if body, err := ioutil.ReadAll(resp.Body); err != nil {
-	// 		log.Printf("Err:%v\nBody: %s\n", err, body)
-	// 		return err
-	// 	}
-
-	// } else {
-	// 	return err
-	// }
+		} else {
+			return err
+		}
+	}
 	return nil
 }

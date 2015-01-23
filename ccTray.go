@@ -11,6 +11,8 @@ import (
 type (
 	ccTray struct {
 		Url         string
+		Username string
+		Password string
 		Ch          chan Project
 		ChErr       chan error
 		interesting []string
@@ -55,8 +57,14 @@ func CreateCcTray(url string) ccTray {
 
 func (cc ccTray) GetLatest() {
 	var err error
-	if resp, err := http.Get(cc.Url); err == nil {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", cc.Url, nil)
+	req.SetBasicAuth(cc.Username, cc.Password)
+
+	if resp, err := client.Do(req); err == nil {
+		log.Printf("CC Tray http GET ok")
 		defer resp.Body.Close()
+		log.Printf("Code: %d, %q\n",resp.StatusCode, resp.Status)
 
 		if body, err := ioutil.ReadAll(resp.Body); err == nil {
 			p := Projects{}
@@ -64,11 +72,14 @@ func (cc ccTray) GetLatest() {
 			cc.publishChanges(p.Projects)
 			return
 		}
+	} else {
+		log.Fatalf("CC Tray http GET failed %v\n",err)
 	}
 	cc.ChErr <- err
 }
 
 func (cc ccTray) publishChanges(projects []Project) {
+	log.Printf("publishing %d\n", len(projects))
 	for _, current := range projects {
 		if prev, ok := cc.previous[current.Name]; ok {
 			if prev != current {
@@ -76,10 +87,10 @@ func (cc ccTray) publishChanges(projects []Project) {
 				cc.previous[current.Name] = current
 				cc.Ch <- current
 			} else {
-				log.Printf("No Change %q\n", current.Name)
+				//log.Printf("No Change %q\n", current.Name)
 			}
 		} else {
-			log.Printf("Adding    %q\n", current.Name)
+			//log.Printf("Adding    %q\n", current.Name)
 			cc.previous[current.Name] = current
 		}
 	}

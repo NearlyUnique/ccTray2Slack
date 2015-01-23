@@ -31,6 +31,7 @@ func LoadConfig(path string) Config {
 }
 
 func (c Config) Process(p Project) (url string, msg SlackMessage) {
+	log.Printf("process::%s\n", p.Name)
 	for _, watch := range c.Watches {
 		if match, _ := regexp.MatchString(watch.ProjectRx, p.Name); match {
 			// TODO: optimize? add "^" + name + "$" to map of projects with slack msg pointers
