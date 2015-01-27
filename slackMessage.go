@@ -18,8 +18,11 @@ type (
 	}
 )
 
+var (
+	rx = regexp.MustCompile("%.*?%")
+)
+
 func (s *SlackMessage) UpdateMessage(p Project) {
-	rx := regexp.MustCompile("%.*?%")
 	s.Text = rx.ReplaceAllStringFunc(s.Text, func(src string) string {
 		switch src {
 		case "%project%":
@@ -39,7 +42,7 @@ func (s *SlackMessage) UpdateMessage(p Project) {
 
 func (s *SlackMessage) PostSlackMessage(url string) error {
 	if url == "debug" {
-		log.Printf("%q\n%v\n", url, &s)
+		log.Printf("HTTP POST -> Slack\n%v\n", *s)
 	} else {
 		jsonStr, _ := json.Marshal(&s)
 		req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
