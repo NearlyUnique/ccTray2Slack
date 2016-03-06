@@ -12,9 +12,10 @@ type (
 		Watches []Watch `json:"watches"`
 	}
 	Watch struct {
-		ProjectRx string       `json:"tag"`
-		SlackUrl  string       `json:"slackUrl"`
-		SlackMsg  SlackMessage `json:"slackMsg"`
+		ProjectRx   string       `json:"tag"`
+		SlackUrl    string       `json:"slackUrl"`
+		Transitions []string     `json:"transitions"`
+		SlackMsg    SlackMessage `json:"slackMsg"`
 	}
 )
 
@@ -30,12 +31,26 @@ func LoadConfig(path string) Config {
 	return cfg
 }
 
+func InSlice(check string, slice []string) bool {
+	for _, entry := range slice {
+		if entry == check {
+			return true
+		}
+	}
+	return false
+}
 func (c Config) Process(p Project) (url string, msg SlackMessage) {
 	log.Printf("process::%s\n", p.Name)
 	for _, watch := range c.Watches {
 		if match, _ := regexp.MatchString(watch.ProjectRx, p.Name); match {
 			// TODO: optimize? add "^" + name + "$" to map of projects with slack msg pointers
-			return watch.SlackUrl, watch.SlackMsg
+			log.Printf("Lookig for %s in %q\n", p.Transition, watch.Transitions)
+
+			if InSlice(p.Transition, watch.Transitions) {
+				return watch.SlackUrl, watch.SlackMsg
+			} else {
+				return "", SlackMessage{}
+			}
 		}
 	}
 	return "", SlackMessage{}

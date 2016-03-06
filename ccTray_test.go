@@ -65,4 +65,8 @@ func TestIt(t *testing.T) {
 	if count == 0 {
 		t.Error("No projects published")
 	}
+	sut.GetLatest() // get changes
+	if count == 0 {
+		t.Error("No projects published")
+	}
 }

@@ -28,7 +28,7 @@ func (s *SlackMessage) UpdateMessage(p Project) {
 		case "%project%":
 			return p.Name
 		case "%status%":
-			return p.LastBuildStatus
+			return p.Transition
 		case "%label%":
 			return p.LastBuildLabel
 		case "%url%":

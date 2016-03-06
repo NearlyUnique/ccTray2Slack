@@ -11,8 +11,8 @@ import (
 type (
 	ccTray struct {
 		Url         string
-		Username string
-		Password string
+		Username    string
+		Password    string
 		Ch          chan Project
 		ChErr       chan error
 		interesting []string
@@ -29,6 +29,7 @@ type (
 		LastBuildLabel  string   `xml:"lastBuildLabel,attr"`
 		LastBuildTime   projTime `xml:"lastBuildTime,attr"`
 		WebUrl          string   `xml:"webUrl,attr"`
+		Transition      string
 	}
 	Projects struct {
 		Projects []Project `xml:"Project"`
@@ -64,7 +65,7 @@ func (cc ccTray) GetLatest() {
 	if resp, err := client.Do(req); err == nil {
 		log.Printf("CC Tray http GET ok")
 		defer resp.Body.Close()
-		log.Printf("Code: %d, %q\n",resp.StatusCode, resp.Status)
+		log.Printf("Code: %d, %q\n", resp.StatusCode, resp.Status)
 
 		if body, err := ioutil.ReadAll(resp.Body); err == nil {
 			p := Projects{}
@@ -73,7 +74,7 @@ func (cc ccTray) GetLatest() {
 			return
 		}
 	} else {
-		log.Fatalf("CC Tray http GET failed %v\n",err)
+		log.Fatalf("CC Tray http GET failed %v\n", err)
 	}
 	cc.ChErr <- err
 }
@@ -83,9 +84,21 @@ func (cc ccTray) publishChanges(projects []Project) {
 	for _, current := range projects {
 		if prev, ok := cc.previous[current.Name]; ok {
 			if prev != current {
-				log.Printf("Replacing %q\n", current.Name)
+				if prev.LastBuildStatus != current.LastBuildStatus {
+					if current.LastBuildStatus == "Success" {
+						current.Transition = "Fixed"
+					}
+					if current.LastBuildStatus == "Failure" {
+						current.Transition = "Broken"
+					}
+				} else {
+					current.Transition = current.LastBuildStatus
+				}
+				log.Printf("Replacing %q from: %q to %q Transition %q \n", current.Name, prev.LastBuildStatus, current.LastBuildStatus, current.Transition)
 				cc.previous[current.Name] = current
 				cc.Ch <- current
+				current.Transition = ""
+				cc.previous[current.Name] = current
 			} else {
 				//log.Printf("No Change %q\n", current.Name)
 			}
