@@ -94,7 +94,7 @@ func (cc ccTray) publishChanges(projects []Project) {
 				} else {
 					current.Transition = current.LastBuildStatus
 				}
-				log.Printf("Replacing %q from: %q to %q Transition %q \n", current.Name, prev.LastBuildStatus, current.LastBuildStatus, current.Transition)
+				log.Printf("Replacing %q - \"%q\" \n", current.Name, current.Transition)
 				cc.previous[current.Name] = current
 				cc.Ch <- current
 				current.Transition = ""
