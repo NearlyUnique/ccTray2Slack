@@ -32,4 +32,10 @@ func TestLoadConfig(t *testing.T) {
 		t.Errorf("Expected %s got %s", expect, got)
 	}
 
+	got_i := len(config.Watches[2].ProjectRx)
+	expect_i := 2
+	if got_i != expect_i {
+		t.Errorf("Expected %d got %d", expect_i, got_i)
+	}
+
 }
