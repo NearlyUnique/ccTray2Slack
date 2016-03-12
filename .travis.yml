@@ -9,8 +9,7 @@ before_deploy: git fetch --tags
 deploy:
   clean_up: false
   provider: releases
-  api_key:
-    secure: FSTam4DnWPgfagDny/M6RqPt4aeQqNpT3S9eZ4h7mbCB9UAukj0hLpFIN+diOU2jr1TNDTrhpuWitb/ruwMrEsgDg66rd8FTq7NOe7T/cOD99WY/FYRHdNpNYL4fb44esp6ur6CRpREvyesRsPFy7fZMb2KVcY17RlotnWOBws5QV2pJbl4Gp1uWzNtYvkaVgrabFkJWZPM5DqReaHmKL4kifOvN/NczEzUCQTf1ybW5h/jgbjvXxB1pMWXVTgdT+qtfxR2Si2trvmqSaaERv4pE4oXePLkZ1i/gO0t2r4TC+Owy69aAtNVKOIDoyokaDA7UGBD/PE8WB5/cK+Su0/8u2QudxsSuF1/qec8xntCP6sI3vRMacz2KHO7+OsKMRNO2RVCDfk18NE2g0eroHTIh9qVOBK0QXa387ZemVmTt67rKS0Wn1vsHbB3VoVjdMpbhk4pubI+pMLIPTmZvxwXBZ5iGxntVduDLsMXtFHdvdTCD4CLmkK18HU01BO1OzJMj6RhpE/N5h40vVD5+1lBo/GSnPknLi02/flQodUefaDeTxVyYv1PKCfwxKsK/lJ5Gs1hCGWvCqLaATMxoNrrlKRb/vnDxpRBE5GenpzN/2xLFrUdZAHQ/ilvngCuOeoCIZEmNyPpCEFGdrXHTmSPs7u5BMin++XZGiyu4kzM=
+  api_key: b296a0675f264e9ddbb47d883c4d264062c27658
   file: bin/ccTray2Slack
   on:
     repo: christer79/ccTray2Slack
