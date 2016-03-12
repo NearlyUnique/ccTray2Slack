@@ -10,7 +10,7 @@ import (
 
 type (
 	ccTray struct {
-		Url         string
+		URL         string
 		Username    string
 		Password    string
 		Ch          chan Project
@@ -49,7 +49,7 @@ func (p Project) String() string {
 
 func CreateCcTray(url string) ccTray {
 	return ccTray{
-		Url:      url,
+		URL:      url,
 		Ch:       make(chan Project),
 		ChErr:    make(chan error),
 		previous: make(map[string]Project),
@@ -59,7 +59,7 @@ func CreateCcTray(url string) ccTray {
 func (cc ccTray) GetLatest() {
 	var err error
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", cc.Url, nil)
+	req, err := http.NewRequest("GET", cc.URL, nil)
 	req.SetBasicAuth(cc.Username, cc.Password)
 
 	if resp, err := client.Do(req); err == nil {
