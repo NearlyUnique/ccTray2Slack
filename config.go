@@ -9,7 +9,8 @@ import (
 
 type (
 	Config struct {
-		Watches []Watch `json:"watches"`
+		Remotes []string `json:"remotes"`
+		Watches []Watch  `json:"watches"`
 	}
 	Watch struct {
 		ProjectRx   []string     `json:"tags"`

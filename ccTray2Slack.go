@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	ccTrayUrl, configPath, usr, pwd := parseCmdLine()
+	configPath, usr, pwd := parseCmdLine()
 	config := LoadConfig(configPath)
-	cc := CreateCcTray(ccTrayUrl)
+	cc := CreateCcTray(config.Remotes[0])
 	cc.Username = usr
 	cc.Password = pwd
 	RunPollLoop(config, cc)
@@ -41,21 +41,16 @@ func RunPollLoop(config Config, cc ccTray) {
 	}
 }
 
-func parseCmdLine() (ccTray, configPath, user, password string) {
-	url := flag.String("url", "http://localhost/cctray.xml", "url for the CCTray xml data")
-	path := flag.String("config", "watch.json", "config for project filter and Slack integration")
+func parseCmdLine() (configPath, user, password string) {
+	path := flag.String("config", "config.json", "config for project filter and Slack integration")
 	usr := flag.String("username", "", "cctray server account name")
 	pwd := flag.String("password", "", "cctray server account password")
 
 	flag.Parse()
 
-	if *url == "" {
-		log.Fatal("url must be set")
-	}
 	if *path == "" {
 		log.Fatal("config path must be set")
 	}
 
-	log.Printf("Downloading from '%s'", *url)
-	return *url, *path, *usr, *pwd
+	return *path, *usr, *pwd
 }

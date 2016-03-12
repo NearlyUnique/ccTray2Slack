@@ -13,29 +13,31 @@ func TestInSlice(t *testing.T) {
 	}
 }
 
+func equalString(t *testing.T, got string, expect string) {
+	if got != expect {
+		t.Errorf("Expected %s got %s", expect, got)
+	}
+}
+
+func equalInt(t *testing.T, got int, expect int) {
+	if got != expect {
+		t.Errorf("Expected %d got %d", expect, got)
+	}
+}
+
 func TestLoadConfig(t *testing.T) {
 
 	config := LoadConfig("testdata/config1.json")
 	if len(config.Watches) != 3 {
 		t.Errorf("Expected 3 watches got %q", len(config.Watches))
 	}
-
-	got := config.Watches[2].Transitions[0]
-	expect := "Broken"
-	if got != expect {
-		t.Errorf("Expected %s got %s", expect, got)
+	if len(config.Remotes) != 2 {
+		t.Errorf("Expected 3 watches got %q", len(config.Watches))
 	}
 
-	got = config.Watches[0].Transitions[1]
-	expect = "Failed"
-	if got != expect {
-		t.Errorf("Expected %s got %s", expect, got)
-	}
-
-	got_i := len(config.Watches[2].ProjectRx)
-	expect_i := 2
-	if got_i != expect_i {
-		t.Errorf("Expected %d got %d", expect_i, got_i)
-	}
+	equalString(t, config.Remotes[1], "otherhost")
+	equalString(t, config.Watches[2].Transitions[0], "Broken")
+	equalString(t, config.Watches[0].Transitions[1], "Failed")
+	equalInt(t, len(config.Watches[2].ProjectRx), 2)
 
 }

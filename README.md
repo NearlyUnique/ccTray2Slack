@@ -2,7 +2,7 @@ Poll ccTray endpoint (Cruise Control xml schema), find changes and post to yourc
 
 Initially done as a learning exercise for me with golang
 
-edit watch.json to point to a slack integration point and alter the project regex to find interesting projects, changes are then sent to slack
+edit config.json to point to a slack integration point and alter the project regex to find interesting projects, changes are then sent to slack
 
 TODO:
 - deal with http authentication to get ccTray xml

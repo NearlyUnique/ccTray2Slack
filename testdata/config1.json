@@ -1,4 +1,5 @@
 {
+	"remotes" : ["localhost", "otherhost"],
 	"watches" : [
 		{
 			"tags": ["^Openstack.*"],
