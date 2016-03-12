@@ -1,3 +1,21 @@
 language: go
 go:
 - '1.5'
+env:
+  global:
+    secure: N2Fxh3V+4IzNgHfrXzJTrUwEvL6yP/4zNT1JthRoLmBaDPHqSmL1ufbjCbFvklH1Mve2O1RF7oEBeQwGFl6n3kTsGqeK6H/lNaG+XEGZhS9MrGU7xYMs1OIRFKo9WVVEu6PoOUu9kEdZE4f/U4uM+TW3ThznQ+e6c9vGu36W9KDXyMT/8bhnngGK0bXhyZ4rOV57MmMXC50uKH37S78YlEGPpMB948aMCGZrdCW6fY4g3pl2VJk200iYJ4FIzxCtFxzv/HNLhH5grDgqeC5DwqE1fTGDKIaeCesbENAcioZVyhxUDSe+1omfYoFbMxu2Rz5i+uN6SQqxOsbpmvwSUNhTG38cCbC4YTMFAiYRHHgq4QH58iG6zc0L8y+TWKFtA1Afhl263D7R1MmQfBKjMoJ8798VyvX/tuWOBL3NMTX6lg4F0LBSG/nN6avnFjI/Cl6jiNrvltLJtF5+aLKZJAOYaWdO2itGW3yH7wlIk55Zh5rI9Mcny2FOjKjcXRNaOhOb7RWX69UUTkSsI2G/G98W6gVeIjp33Lrp0Skm3XsRWhPVnFx0QXnVeXKAmQDiwR9jV77vSD/v+53WrOWqEHsyaFgA4fnxymb07IV8MFigmJ2Zexf/cPuB6WK+AUikLwopaVslvDnUVfu87k+67xluy7anLz2PbRzhmXJNZM4=
+install:
+- go get -t -v ./...
+- go test -v ./...
+- go build -o bin/ccTray2Slack -v .
+before_deploy: git fetch --tags
+deploy:
+  clean_up: false
+  provider: releases
+  api_key:
+    secure: N2Fxh3V+4IzNgHfrXzJTrUwEvL6yP/4zNT1JthRoLmBaDPHqSmL1ufbjCbFvklH1Mve2O1RF7oEBeQwGFl6n3kTsGqeK6H/lNaG+XEGZhS9MrGU7xYMs1OIRFKo9WVVEu6PoOUu9kEdZE4f/U4uM+TW3ThznQ+e6c9vGu36W9KDXyMT/8bhnngGK0bXhyZ4rOV57MmMXC50uKH37S78YlEGPpMB948aMCGZrdCW6fY4g3pl2VJk200iYJ4FIzxCtFxzv/HNLhH5grDgqeC5DwqE1fTGDKIaeCesbENAcioZVyhxUDSe+1omfYoFbMxu2Rz5i+uN6SQqxOsbpmvwSUNhTG38cCbC4YTMFAiYRHHgq4QH58iG6zc0L8y+TWKFtA1Afhl263D7R1MmQfBKjMoJ8798VyvX/tuWOBL3NMTX6lg4F0LBSG/nN6avnFjI/Cl6jiNrvltLJtF5+aLKZJAOYaWdO2itGW3yH7wlIk55Zh5rI9Mcny2FOjKjcXRNaOhOb7RWX69UUTkSsI2G/G98W6gVeIjp33Lrp0Skm3XsRWhPVnFx0QXnVeXKAmQDiwR9jV77vSD/v+53WrOWqEHsyaFgA4fnxymb07IV8MFigmJ2Zexf/cPuB6WK+AUikLwopaVslvDnUVfu87k+67xluy7anLz2PbRzhmXJNZM4=
+  file: bin/ccTray2Slack
+  on:
+    repo: christer79/ccTray2Slack
+    tags: true
+    all_branches: true
