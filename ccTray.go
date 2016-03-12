@@ -82,29 +82,31 @@ func (cc ccTray) GetLatest() {
 func (cc ccTray) publishChanges(projects []Project) {
 	log.Printf("publishing %d\n", len(projects))
 	for _, current := range projects {
-		if prev, ok := cc.previous[current.Name]; ok {
-			if prev != current {
-				if prev.LastBuildStatus != current.LastBuildStatus {
-					if current.LastBuildStatus == "Success" {
-						current.Transition = "Fixed"
+		if current.Activity == "Sleeping" {
+			if prev, ok := cc.previous[current.Name]; ok {
+				if prev != current {
+					if prev.LastBuildStatus != current.LastBuildStatus {
+						if current.LastBuildStatus == "Success" {
+							current.Transition = "Fixed"
+						}
+						if current.LastBuildStatus == "Failure" {
+							current.Transition = "Broken"
+						}
+					} else {
+						current.Transition = current.LastBuildStatus
 					}
-					if current.LastBuildStatus == "Failure" {
-						current.Transition = "Broken"
-					}
+					log.Printf("Replacing %q - \"%q\" \n", current.Name, current.Transition)
+					cc.previous[current.Name] = current
+					cc.Ch <- current
+					current.Transition = ""
+					cc.previous[current.Name] = current
 				} else {
-					current.Transition = current.LastBuildStatus
+					//log.Printf("No Change %q\n", current.Name)
 				}
-				log.Printf("Replacing %q - \"%q\" \n", current.Name, current.Transition)
-				cc.previous[current.Name] = current
-				cc.Ch <- current
-				current.Transition = ""
-				cc.previous[current.Name] = current
 			} else {
-				//log.Printf("No Change %q\n", current.Name)
+				//log.Printf("Adding    %q\n", current.Name)
+				cc.previous[current.Name] = current
 			}
-		} else {
-			//log.Printf("Adding    %q\n", current.Name)
-			cc.previous[current.Name] = current
 		}
 	}
 	// everything is ok, finished looping - looks hacky to me but another channel, really?
