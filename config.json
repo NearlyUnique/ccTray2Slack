@@ -24,7 +24,7 @@
 			}
 		}
 		,{
-			"tags": ["^Trigger","^Trigged.*"],
+			"tags": ["Trigger :: defaultStage :: Trigger","^Trigged.*"],
 			"slackUrl": "https://hooks.slack.com/services/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",
 			"transitions": ["Broken","Fixed"],
 			"slackMsg": {
