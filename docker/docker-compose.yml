@@ -4,3 +4,6 @@ cctray_to_slack:
     - ./config:/root/config
   environment:
     - VERSION=v0.1.0
+    - USERNAME=user
+    - PASSWORD=password
+
