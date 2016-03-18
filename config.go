@@ -20,16 +20,21 @@ type (
 	}
 )
 
-func LoadConfig(path string) Config {
+func ConfigChanged(path string) bool {
+	return false
+}
+
+func LoadConfig(path string) (Config, error) {
 	cfg := Config{}
-	if file, err := ioutil.ReadFile(path); err == nil {
+	file, err := ioutil.ReadFile(path)
+
+	if err == nil {
 		err = json.Unmarshal(file, &cfg)
 		log.Printf("Watching %d Project filters, %s", len(cfg.Watches), cfg.Watches[0].ProjectRx)
 	} else {
-		log.Fatal("Unable to load config '%v'\n", err)
+		log.Printf("Unable to load config '%v'\n", err)
 	}
-
-	return cfg
+	return cfg, err
 }
 
 func InSlice(check string, slice []string) bool {

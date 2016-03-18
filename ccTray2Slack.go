@@ -6,13 +6,26 @@ import (
 	"time"
 )
 
+type CommandLineArgs struct {
+	password   string
+	username   string
+	configPath string
+}
+
+var commandLineArgs CommandLineArgs
+
 func main() {
 	configPath, usr, pwd := parseCmdLine()
-	config := LoadConfig(configPath)
-	cc := CreateCcTray(config.Remotes[0])
-	cc.Username = usr
-	cc.Password = pwd
-	RunPollLoop(config, cc)
+	commandLineArgs = CommandLineArgs{configPath: configPath, username: usr, password: pwd}
+	var cc ccTray
+	if config, err := LoadConfig(configPath); err == nil {
+		cc = CreateCcTray(config.Remotes[0])
+		cc.Username = usr
+		cc.Password = pwd
+		RunPollLoop(config, cc)
+	} else {
+		log.Fatal("Unable to load config stoping executions")
+	}
 }
 
 func RunPollLoop(config Config, cc ccTray) {
@@ -22,6 +35,11 @@ func RunPollLoop(config Config, cc ccTray) {
 	for {
 		select {
 		case p := <-cc.Ch:
+			if ConfigChanged(commandLineArgs.configPath) {
+				if temp, err := LoadConfig(commandLineArgs.configPath); err == nil {
+					config = temp
+				}
+			}
 			if url, msg := config.Process(p); url != "" {
 				log.Printf("posting for %q\n", p.Name)
 				msg.UpdateMessage(p)

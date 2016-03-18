@@ -27,7 +27,7 @@ func equalInt(t *testing.T, got int, expect int) {
 
 func TestLoadConfig(t *testing.T) {
 
-	config := LoadConfig("testdata/config1.json")
+	config, _ := LoadConfig("testdata/config1.json")
 	if len(config.Watches) != 3 {
 		t.Errorf("Expected 3 watches got %q", len(config.Watches))
 	}
@@ -39,5 +39,9 @@ func TestLoadConfig(t *testing.T) {
 	equalString(t, config.Watches[2].Transitions[0], "Broken")
 	equalString(t, config.Watches[0].Transitions[1], "Failed")
 	equalInt(t, len(config.Watches[2].ProjectRx), 2)
-
+	configPath := "testdata/config_which_does_not_exist.json"
+	_, err := LoadConfig(configPath)
+	if err == nil {
+		t.Errorf("Expecte to fail when loading config: %q", configPath)
+	}
 }
