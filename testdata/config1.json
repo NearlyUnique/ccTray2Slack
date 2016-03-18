@@ -5,6 +5,7 @@
 			"tags": ["^Openstack.*"],
 			"slackUrl": "_",
 			"transitions": ["Success","Failed"],
+			"colormapping":{"Success":"#00ff00", "Failed":"#ff0000", "Fixed":"#00fe00", "Broken":"#fe0000"},
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
 				"username": "OpenStack",
@@ -16,8 +17,14 @@
 			"tags": ["^Provision.*"],
 			"slackUrl": "_",
 			"transitions": ["Success","Failed"],
+			"colormapping":{"Success":"#00ff00", "Failed":"#ff0000", "Fixed":"#00fe00", "Broken":"#fe0000"},
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+				"attachments": [
+					{
+						"text":"This is attachments text"
+					}
+				],
 				"username": "Provision",
 				"icon_emoji": "ghost",
 				"channel": "#api_test"
@@ -27,8 +34,14 @@
 			"tags": ["^Trig.*","aka"],
 			"slackUrl": "_",
 			"transitions": ["Broken","Fixed"],
+			"colormapping":{"Success":"#00ff00", "Failed":"#ff0000", "Fixed":"#00fe00", "Broken":"#fe0000"},
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+				"attachments": [
+					{
+						"text":"This is attachments text"
+					}
+				],
 				"username": "Provision",
 				"icon_emoji": "ghost",
 				"channel": "#api_test"

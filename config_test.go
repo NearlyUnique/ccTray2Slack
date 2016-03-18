@@ -39,6 +39,11 @@ func TestLoadConfig(t *testing.T) {
 	equalString(t, config.Watches[2].Transitions[0], "Broken")
 	equalString(t, config.Watches[0].Transitions[1], "Failed")
 	equalInt(t, len(config.Watches[2].ProjectRx), 2)
+
+	equalString(t, config.Watches[0].ColorMapping["Success"], "#00ff00")
+
+	equalString(t, config.Watches[1].SlackMsg.Attachements[0].Text, "This is attachments text")
+
 	configPath := "testdata/config_which_does_not_exist.json"
 	_, err := LoadConfig(configPath)
 	if err == nil {

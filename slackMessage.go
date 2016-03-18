@@ -9,12 +9,19 @@ import (
 	"regexp"
 )
 
+type Attachement struct {
+	Title string `json:"title"`
+	Color string `json:"color"`
+	Text  string `json:"text"`
+}
+
 type (
 	SlackMessage struct {
-		Text     string `json:"text"`
-		Username string `json:"username"`
-		IconUrl  string `json:"icon_url"`
-		Channel  string `json:"channel"`
+		Text         string        `json:"text"`
+		Attachements []Attachement `json:"attachments"`
+		Username     string        `json:"username"`
+		IconUrl      string        `json:"icon_url"`
+		Channel      string        `json:"channel"`
 	}
 )
 
@@ -23,6 +30,9 @@ var (
 )
 
 func (s *SlackMessage) UpdateMessage(p Project) {
+
+	log.Println("Text")
+
 	s.Text = rx.ReplaceAllStringFunc(s.Text, func(src string) string {
 		switch src {
 		case "%project%":
@@ -38,6 +48,25 @@ func (s *SlackMessage) UpdateMessage(p Project) {
 		}
 		return src
 	})
+	log.Println("Updating attachments %v ", s)
+	for i, _ := range s.Attachements {
+
+		s.Attachements[i].Text = rx.ReplaceAllStringFunc(s.Attachements[i].Text, func(src string) string {
+			switch src {
+			case "%project%":
+				return p.Name
+			case "%status%":
+				return p.Transition
+			case "%label%":
+				return p.LastBuildLabel
+			case "%url%":
+				return p.WebUrl
+			case "%time%":
+				return p.LastBuildTime.Format("2006-01-02 15:04:05")
+			}
+			return src
+		})
+	}
 }
 
 func (s *SlackMessage) PostSlackMessage(url string) error {
@@ -45,6 +74,7 @@ func (s *SlackMessage) PostSlackMessage(url string) error {
 		log.Printf("HTTP POST -> Slack\n%v\n", *s)
 	} else {
 		jsonStr, _ := json.Marshal(&s)
+		log.Printf("Message %v", string(jsonStr))
 		req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 		if err != nil {
 			return err

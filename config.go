@@ -13,10 +13,11 @@ type (
 		Watches []Watch  `json:"watches"`
 	}
 	Watch struct {
-		ProjectRx   []string     `json:"tags"`
-		SlackUrl    string       `json:"slackUrl"`
-		Transitions []string     `json:"transitions"`
-		SlackMsg    SlackMessage `json:"slackMsg"`
+		ProjectRx    []string          `json:"tags"`
+		SlackUrl     string            `json:"slackUrl"`
+		Transitions  []string          `json:"transitions"`
+		ColorMapping map[string]string `json:"colormapping"`
+		SlackMsg     SlackMessage      `json:"slackMsg"`
 	}
 )
 
