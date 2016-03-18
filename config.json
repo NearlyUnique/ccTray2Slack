@@ -3,7 +3,7 @@
 	"watches" : [
 		{
 			"tags": ["^Openstack.*"],
-			"slackUrl": "https://hooks.slack.com/services/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",
+			"slackUrl": "_",
 			"transitions": ["Success","Failed"],
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
@@ -14,7 +14,7 @@
 		}
 		,{
 			"tags": ["^Provision.*"],
-			"slackUrl": "https://hooks.slack.com/services/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",
+			"slackUrl": "_",
 			"transitions": ["Success","Failed"],
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
@@ -25,7 +25,7 @@
 		}
 		,{
 			"tags": ["Trigger :: defaultStage :: Trigger","^Trigged.*"],
-			"slackUrl": "https://hooks.slack.com/services/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",
+			"slackUrl": "_",
 			"transitions": ["Broken","Fixed"],
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
