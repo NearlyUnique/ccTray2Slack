@@ -2,3 +2,5 @@ cctray_to_slack:
   build: .
   volumes:
     - ./config:/root/config
+  environment:
+    - VERSION=v0.1.0
