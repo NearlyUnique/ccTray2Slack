@@ -55,7 +55,6 @@ func TestIt(t *testing.T) {
 		for {
 			select {
 			case p := <-sut.Ch:
-				fmt.Printf("%v\n", p)
 				equalString(t, fmt.Sprintf("%v", p), expect[count])
 				count++
 			case e := <-sut.ChErr:
