@@ -30,6 +30,13 @@ var (
 	<Project name="Project 3" activity="Sleeping" lastBuildStatus="Failed" lastBuildLabel="1.2.7" lastBuildTime="2009-07-27T14:17:19" webUrl="http://localhost:8153/cruise/v3"/>
 </Projects>`,
 	}
+
+	expect = [6]string{"name=Project 3, activity=Sleeping, status=Success, label=1.2.7, time=2009-07-27 18:17:19 +0000 UTC, url=http://localhost:8153/cruise/v3, transition=Success",
+		"name=Project 3, activity=Sleeping, status=Success, label=1.2.7, time=2009-07-27 18:17:19 +0000 UTC, url=http://localhost:8153/cruise/v3, transition=Fixed",
+		"name=Project 1, activity=Sleeping, status=Success, label=1.2.3, time=2009-07-27 14:17:19 +0000 UTC, url=http://localhost:8153/cruise/v1, transition=Success",
+		"name=Project 1, activity=Sleeping, status=Success, label=1.2.3, time=2009-07-27 14:17:19 +0000 UTC, url=http://localhost:8153/cruise/v1, transition=Fixed",
+		"name=Project 3, activity=Sleeping, status=Failed, label=1.2.7, time=2009-07-27 14:17:19 +0000 UTC, url=http://localhost:8153/cruise/v3, transition=Failed",
+		"name=Project 3, activity=Sleeping, status=Failed, label=1.2.7, time=2009-07-27 14:17:19 +0000 UTC, url=http://localhost:8153/cruise/v3, transition=Broken"}
 )
 
 func TestIt(t *testing.T) {
@@ -48,10 +55,9 @@ func TestIt(t *testing.T) {
 		for {
 			select {
 			case p := <-sut.Ch:
+				fmt.Printf("%v\n", p)
+				equalString(t, fmt.Sprintf("%v", p), expect[count])
 				count++
-				if p.Activity != "Sleeping" {
-					t.Error("Activity mismatch")
-				}
 			case e := <-sut.ChErr:
 				if e != nil {
 					t.Error("Unexpected errors")
@@ -61,14 +67,6 @@ func TestIt(t *testing.T) {
 	}()
 
 	sut.GetLatest() // prime the system
-	count = 0
 	sut.GetLatest() // get changes
-	if count == 0 {
-		t.Error("No projects published")
-	}
-	count = 0
 	sut.GetLatest() // get changes
-	if count == 0 {
-		t.Error("No projects published")
-	}
 }

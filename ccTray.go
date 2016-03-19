@@ -38,13 +38,14 @@ type (
 
 func (p Project) String() string {
 	return fmt.Sprintf(
-		"name=%s, activity=%s, status=%s, label=%s, time=%v, url=%s",
+		"name=%s, activity=%s, status=%s, label=%s, time=%v, url=%s, transition=%s",
 		p.Name,
 		p.Activity,
 		p.LastBuildStatus,
 		p.LastBuildLabel,
 		p.LastBuildTime,
-		p.WebUrl)
+		p.WebUrl,
+		p.Transition)
 }
 
 func CreateCcTray(url string) ccTray {
