@@ -22,7 +22,7 @@ var (
 		`<Projects>
 	<Project name="Project 1" activity="Sleeping" lastBuildStatus="Passed" lastBuildLabel="1.2.3" lastBuildTime="2015-01-19T08:53:01" webUrl="http://localhost:8153/cruise/v1"/>
 	<Project name="Project 2" activity="Building" lastBuildStatus="Success" lastBuildLabel="1.2.6" lastBuildTime="2009-07-27T14:17:19" webUrl="http://localhost:8153/cruise/v2"/>
-	<Project name="Project 3" activity="Sleeping" lastBuildStatus="Success" lastBuildLabel="1.2.7" lastBuildTime="2009-07-27T14:17:19" webUrl="http://localhost:8153/cruise/v3"/>
+	<Project name="Project 3" activity="Sleeping" lastBuildStatus="Success" lastBuildLabel="1.2.7" lastBuildTime="2009-07-27T18:17:19" webUrl="http://localhost:8153/cruise/v3"/>
 </Projects>`,
 		`<Projects>
 	<Project name="Project 1" activity="Sleeping" lastBuildStatus="Passed" lastBuildLabel="1.2.3" lastBuildTime="2015-01-19T08:53:01" webUrl="http://localhost:8153/cruise/v1"/>
@@ -61,10 +61,12 @@ func TestIt(t *testing.T) {
 	}()
 
 	sut.GetLatest() // prime the system
+	count = 0
 	sut.GetLatest() // get changes
 	if count == 0 {
 		t.Error("No projects published")
 	}
+	count = 0
 	sut.GetLatest() // get changes
 	if count == 0 {
 		t.Error("No projects published")
