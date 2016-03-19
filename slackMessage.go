@@ -30,9 +30,6 @@ var (
 )
 
 func (s *SlackMessage) UpdateMessage(p Project) {
-
-	log.Println("Text")
-
 	s.Text = rx.ReplaceAllStringFunc(s.Text, func(src string) string {
 		switch src {
 		case "%project%":
@@ -48,9 +45,7 @@ func (s *SlackMessage) UpdateMessage(p Project) {
 		}
 		return src
 	})
-	log.Println("Updating attachments %v ", s)
 	for i, _ := range s.Attachements {
-
 		s.Attachements[i].Text = rx.ReplaceAllStringFunc(s.Attachements[i].Text, func(src string) string {
 			switch src {
 			case "%project%":
@@ -74,7 +69,6 @@ func (s *SlackMessage) PostSlackMessage(url string) error {
 		log.Printf("HTTP POST -> Slack\n%v\n", *s)
 	} else {
 		jsonStr, _ := json.Marshal(&s)
-		log.Printf("Message %v", string(jsonStr))
 		req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 		if err != nil {
 			return err
