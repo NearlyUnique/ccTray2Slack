@@ -29,8 +29,8 @@ var (
 	rx = regexp.MustCompile("%.*?%")
 )
 
-func (s *SlackMessage) UpdateMessage(p Project) {
-	s.Text = rx.ReplaceAllStringFunc(s.Text, func(src string) string {
+func replaceString(s string, p Project) string {
+	return rx.ReplaceAllStringFunc(s, func(src string) string {
 		switch src {
 		case "%project%":
 			return p.Name
@@ -45,22 +45,11 @@ func (s *SlackMessage) UpdateMessage(p Project) {
 		}
 		return src
 	})
+}
+func (s *SlackMessage) UpdateMessage(p Project) {
+	s.Text = replaceString(s.Text, p)
 	for i, _ := range s.Attachements {
-		s.Attachements[i].Text = rx.ReplaceAllStringFunc(s.Attachements[i].Text, func(src string) string {
-			switch src {
-			case "%project%":
-				return p.Name
-			case "%status%":
-				return p.Transition
-			case "%label%":
-				return p.LastBuildLabel
-			case "%url%":
-				return p.WebUrl
-			case "%time%":
-				return p.LastBuildTime.Format("2006-01-02 15:04:05")
-			}
-			return src
-		})
+		s.Attachements[i].Text = replaceString(s.Attachements[i].Text, p)
 	}
 }
 
