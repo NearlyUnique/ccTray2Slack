@@ -8,16 +8,17 @@ import (
 )
 
 type (
-	Config struct {
+	ColorMappings map[string]string
+	Config        struct {
 		Remotes []string `json:"remotes"`
 		Watches []Watch  `json:"watches"`
 	}
 	Watch struct {
-		ProjectRx    []string          `json:"tags"`
-		SlackUrl     string            `json:"slackUrl"`
-		Transitions  []string          `json:"transitions"`
-		ColorMapping map[string]string `json:"colormapping"`
-		SlackMsg     SlackMessage      `json:"slackMsg"`
+		ProjectRx    []string      `json:"tags"`
+		SlackUrl     string        `json:"slackUrl"`
+		Transitions  []string      `json:"transitions"`
+		ColorMapping ColorMappings `json:"colormapping"`
+		SlackMsg     SlackMessage  `json:"slackMsg"`
 	}
 )
 
@@ -56,6 +57,9 @@ func (c Config) Process(p Project) (url string, msg SlackMessage) {
 				log.Printf("Lookig for %s in %q\n", p.Transition, watch.Transitions)
 
 				if InSlice(p.Transition, watch.Transitions) {
+					for i, _ := range watch.SlackMsg.Attachements {
+						watch.SlackMsg.Attachements[i].Color = watch.ColorMapping[p.Transition]
+					}
 					return watch.SlackUrl, watch.SlackMsg
 				} else {
 					return "", SlackMessage{}
