@@ -9,7 +9,7 @@
 			"slackMsg": {
 				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
 				"username": "OpenStack",
-				"icon_emoji": "ghost",
+				"ion_emoji": ":ghost:",
 				"channel": "#api_test"
 			}
 		}
@@ -26,7 +26,7 @@
 					}
 				],
 				"username": "Provision",
-				"icon_emoji": "ghost",
+				"ion_emoji": ":ghost:",
 				"channel": "#api_test"
 			}
 		}
@@ -43,7 +43,7 @@
 					}
 				],
 				"username": "Provision",
-				"icon_emoji": "ghost",
+				"ion_emoji": ":ghost:",
 				"channel": "#api_test"
 			}
 		}

@@ -38,6 +38,8 @@ func RunPollLoop(config Config, cc ccTray) {
 			if ConfigChanged(commandLineArgs.configPath) {
 				if temp, err := LoadConfig(commandLineArgs.configPath); err == nil {
 					config = temp
+				} else {
+					log.Printf("Unable to read config file %s.", commandLineArgs.configPath)
 				}
 			}
 			if url, msg := config.Process(p); url != "" {
