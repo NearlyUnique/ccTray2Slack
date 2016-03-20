@@ -29,10 +29,10 @@ func equalInt(t *testing.T, got int, expect int) {
 func TestInSlice(t *testing.T) {
 
 	check := []string{"apa", "bepa", "cepa"}
-	if InSlice("feg", check) {
+	if inSlice("feg", check) {
 		t.Error("feg is not in slice")
 	}
-	if !InSlice("bepa", check) {
+	if !inSlice("bepa", check) {
 		t.Error("bepa is in slice")
 	}
 }

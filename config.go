@@ -8,26 +8,34 @@ import (
 )
 
 type (
-	ColorMappings map[string]string
 
+	// Config is the entire configuration.
+	// Remotes:  which remote ccTrays to mointor
+	// Watches: see struct watches
+	// SlackMessages: see struct SlackMessage
 	Config struct {
 		Remotes       []string                `json:"remotes"`
 		Watches       []Watch                 `json:"watches"`
 		SlackMessages map[string]SlackMessage `json:"slackmessages"`
 	}
 
+	// Watch is the mapping between ccTray Project name and slack.
+	// SlckUrl is the web hook to slack to use adn channel the chanel to post messages to.
+	// Transitions define whcih transitions to report
 	Watch struct {
 		ProjectRx   []string `json:"tags"`
-		SlackUrl    string   `json:"slackUrl"`
+		SlackURL    string   `json:"slackUrl"`
 		Transitions []string `json:"transitions"`
 		Channel     string   `json:"channel"`
 	}
 )
 
+// ConfigChanged returns true
 func ConfigChanged(path string) bool {
-	return false
+	return true
 }
 
+// LoadConfig reads the config from path given as argument
 func LoadConfig(path string) (Config, error) {
 	cfg := Config{}
 	file, err := ioutil.ReadFile(path)
@@ -41,7 +49,7 @@ func LoadConfig(path string) (Config, error) {
 	return cfg, err
 }
 
-func InSlice(check string, slice []string) bool {
+func inSlice(check string, slice []string) bool {
 	for _, entry := range slice {
 		if entry == check {
 			return true
@@ -50,6 +58,7 @@ func InSlice(check string, slice []string) bool {
 	return false
 }
 
+// Process returns a url and template slackmessage to be used for sending messages to slack given a certain Project
 func (c Config) Process(p Project) (url string, msg SlackMessage) {
 	log.Printf("process::%s\n", p.Name)
 
@@ -59,13 +68,12 @@ func (c Config) Process(p Project) (url string, msg SlackMessage) {
 				// TODO: optimize? add "^" + name + "$" to map of projects with slack msg pointers
 				log.Printf("Lookig for %s in %q\n", p.Transition, watch.Transitions)
 
-				if InSlice(p.Transition, watch.Transitions) {
+				if inSlice(p.Transition, watch.Transitions) {
 					message := c.SlackMessages[p.Transition]
 					message.Channel = watch.Channel
-					return watch.SlackUrl, message
-				} else {
-					return "", SlackMessage{}
+					return watch.SlackURL, message
 				}
+				return "", SlackMessage{}
 			}
 		}
 	}
