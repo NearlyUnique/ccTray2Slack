@@ -9,18 +9,20 @@ import (
 	"regexp"
 )
 
+//Attachement defines an attchemnt included in a slack message
 type Attachement struct {
 	Title string `json:"title"`
 	Color string `json:"color"`
 	Text  string `json:"text"`
 }
 
+//SlackMessage is the payload sent to slack in the message request
 type (
 	SlackMessage struct {
 		Text         string        `json:"text"`
 		Attachements []Attachement `json:"attachments"`
 		Username     string        `json:"username"`
-		IconUrl      string        `json:"icon_url"`
+		IonEmoji     string        `json:"ion_emoji"`
 		Channel      string        `json:"channel"`
 	}
 )
@@ -46,13 +48,17 @@ func replaceString(s string, p Project) string {
 		return src
 	})
 }
+
+// UpdateMessage replaces keywords in a slack message with the matching values from a Project.
 func (s *SlackMessage) UpdateMessage(p Project) {
 	s.Text = replaceString(s.Text, p)
-	for i, _ := range s.Attachements {
+	for i := range s.Attachements {
 		s.Attachements[i].Text = replaceString(s.Attachements[i].Text, p)
+		s.Attachements[i].Title = replaceString(s.Attachements[i].Title, p)
 	}
 }
 
+//PostSlackMessage posts a message to slack on the url passed as argument
 func (s *SlackMessage) PostSlackMessage(url string) error {
 	if url == "debug" {
 		log.Printf("HTTP POST -> Slack\n%v\n", *s)
