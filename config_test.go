@@ -1,12 +1,24 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func equalString(t *testing.T, got string, expect string) {
 	if got != expect {
 		t.Errorf("Expected %s got %s", expect, got)
 	}
 }
+
+var (
+	testProjects = []Project{
+		Project{Name: "Project1", Transition: "Fixed"},
+		Project{Name: "Project1", Transition: "Success"},
+		Project{Name: "Notinconfig", Transition: "Failed"}}
+	expectedWatches = []Watch{Watch{[]string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test"},
+		Watch{[]string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
+)
 
 func equalInt(t *testing.T, got int, expect int) {
 	if got != expect {
@@ -25,10 +37,26 @@ func TestInSlice(t *testing.T) {
 	}
 }
 
-var (
-	expectedWatches = []Watch{Watch{[]string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test"},
-		Watch{[]string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
-)
+func TestProcess(t *testing.T) {
+	fmt.Printf("length: %d\n", len(testProjects))
+	config, _ := LoadConfig("testdata/config2.json")
+	// When Processing a correct project but with wrong Transiton
+	url, msg := config.Process(testProjects[0])
+	// ... return empty url
+	equalString(t, url, "")
+	// When processing a correct project with corret transition
+	url, msg = config.Process(testProjects[1])
+	//... return message for the correct transition
+	equalString(t, msg.Text, "Success text")
+	// ... a non empty url
+	equalString(t, url, "_")
+	// ... correct channel should be set
+	equalString(t, msg.Channel, "#api_test")
+	// When Processing a project which does not match a watched project
+	url, msg = config.Process(testProjects[2])
+	// ... return an empty url
+	equalString(t, url, "")
+}
 
 func TestLoadConfig(t *testing.T) {
 

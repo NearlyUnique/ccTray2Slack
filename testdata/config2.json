@@ -1,0 +1,32 @@
+{
+	"remotes" : ["localhost", "otherhost"],
+	"slackmessages" : {
+	  "Success": {
+	  	"text": "Success text"
+	  },
+	  "Failed": {
+	  	"text": "Failed text"
+	  },
+	  "Fixed": {
+	  	"text": "Fixed text"
+	  	  },
+	  "Broken": {
+	  		"text": "Broken text"
+	  	  	}
+	},
+
+	"watches" : [
+		{
+			"tags": ["Project1"],
+			"transitions": ["Success","Failed"],
+			"slackUrl": "project1",
+			"channel": "#api_test"
+		}
+		,{
+			"tags": ["Project2", "Project3"],
+			"transitions": ["Success","Failed"],
+			"slackUrl": "project2_3",
+			"channel": "#api_test"
+		}
+	]
+}
