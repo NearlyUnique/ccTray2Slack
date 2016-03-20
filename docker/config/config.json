@@ -5,30 +5,55 @@
 			"tags": ["^Project1.*"],
 			"slackUrl": "https://hooks.slack.com/services/",
 			"transitions": ["Success","Failed"],
-			"colormapping":{"Success":"#00ff00", "Failed":"#ff0000", "Fixed":"#00fe00", "Broken":"#fe0000"},
-			"slackMsg": {
-				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
-				"username": "Username1",
-				"icon_emoji": ":building_construction:",
-				"channel": "#api_test"
-			}
+			"channel": "#api_test"
 		}
 		,{
 			"tags": ["Project3 :: Stage1 :: Job1","^Project4.*"],
 			"slackUrl": "https://hooks.slack.com/services/",
 			"transitions": ["Broken","Fixed"],
-			"colormapping":{"Success":"#0000ff", "Failed":"#ff0000", "Fixed":"#00dd00", "Broken":"#0000dd"},
-			"slackMsg": {
-				"text": "Your project:  %project%, <%url%|%label%>",
-				"attachments": [
-					{
-						"text":"is %status% since %time%"
-					}
-				],
-				"username": "Username3",
-				"icon_emoji": "ghost",
-				"channel": "#api_test"
-			}
+			"channel": "#api_test"
 		}
-	]
+	],
+	"slackmessages" : {
+		"Fixed" : {
+			"text": "Your project:  %project%, <%url%|%label%>",
+			"attachments": [
+				{
+					"text":"is %status% since %time%"
+				}
+			],
+			"username": "Username3",
+			"icon_emoji": "ghost",
+		},
+    "Broken" : {
+			"text": "Your project:  %project%, <%url%|%label%>",
+			"attachments": [
+				{
+					"text":"is %status% since %time%"
+				}
+			],
+			"username": "Username3",
+			"icon_emoji": "ghost",
+		},
+		"Success" : {
+			"text": "Your project:  %project%, <%url%|%label%>",
+			"attachments": [
+				{
+					"text":"is %status% since %time%"
+				}
+			],
+			"username": "Username3",
+			"icon_emoji": "ghost",
+		},
+    "Failed" : {
+			"text": "Your project:  %project%, <%url%|%label%>",
+			"attachments": [
+				{
+					"text":"is %status% since %time%"
+				}
+			],
+			"username": "Username3",
+			"icon_emoji": "ghost",
+		}
+	}
 }
