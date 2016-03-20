@@ -49,7 +49,7 @@ func TestProcess(t *testing.T) {
 	//... return message for the correct transition
 	equalString(t, msg.Text, "Success text")
 	// ... a non empty url
-	equalString(t, url, "_")
+	equalString(t, url, "project1")
 	// ... correct channel should be set
 	equalString(t, msg.Channel, "#api_test")
 	// When Processing a project which does not match a watched project
