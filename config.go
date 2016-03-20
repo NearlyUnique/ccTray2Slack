@@ -9,16 +9,18 @@ import (
 
 type (
 	ColorMappings map[string]string
-	Config        struct {
-		Remotes []string `json:"remotes"`
-		Watches []Watch  `json:"watches"`
+
+	Config struct {
+		Remotes       []string                `json:"remotes"`
+		Watches       []Watch                 `json:"watches"`
+		SlackMessages map[string]SlackMessage `json:"slackmessages"`
 	}
+
 	Watch struct {
-		ProjectRx    []string      `json:"tags"`
-		SlackUrl     string        `json:"slackUrl"`
-		Transitions  []string      `json:"transitions"`
-		ColorMapping ColorMappings `json:"colormapping"`
-		SlackMsg     SlackMessage  `json:"slackMsg"`
+		ProjectRx   []string `json:"tags"`
+		SlackUrl    string   `json:"slackUrl"`
+		Transitions []string `json:"transitions"`
+		Channel     string   `json:"channel"`
 	}
 )
 
@@ -50,6 +52,7 @@ func InSlice(check string, slice []string) bool {
 
 func (c Config) Process(p Project) (url string, msg SlackMessage) {
 	log.Printf("process::%s\n", p.Name)
+
 	for _, watch := range c.Watches {
 		for _, projectRx := range watch.ProjectRx {
 			if match, _ := regexp.MatchString(projectRx, p.Name); match {
@@ -57,10 +60,9 @@ func (c Config) Process(p Project) (url string, msg SlackMessage) {
 				log.Printf("Lookig for %s in %q\n", p.Transition, watch.Transitions)
 
 				if InSlice(p.Transition, watch.Transitions) {
-					for i, _ := range watch.SlackMsg.Attachements {
-						watch.SlackMsg.Attachements[i].Color = watch.ColorMapping[p.Transition]
-					}
-					return watch.SlackUrl, watch.SlackMsg
+					message := c.SlackMessages[p.Transition]
+					message.Channel = watch.Channel
+					return watch.SlackUrl, message
 				} else {
 					return "", SlackMessage{}
 				}

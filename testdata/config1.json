@@ -1,51 +1,74 @@
 {
 	"remotes" : ["localhost", "otherhost"],
+	"slackmessages" : {
+	  "Success": {
+	  	"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  	"attachments": [
+	  		{
+	  			"text":"This is attachments text",
+					"color":"#00ff00"
+	  		}
+	  	],
+	  	"username": "Provision",
+	  	"ion_emoji": ":ghost:",
+	  	"channel": "#api_test"
+	  },
+	  "Failed": {
+	  	"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  	"attachments": [
+	  		{
+	  			"text":"This is attachments text",
+					"color":"#ff0000"
+	  		}
+	  	],
+	  	"username": "Provision",
+	  	"ion_emoji": ":ghost:",
+	  	"channel": "#api_test"
+	  },
+	  "Fixed": {
+	  	"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  	"attachments": [
+	  		{
+	  			"text":"This is attachments text",
+					"color":"#00ff00"
+	  		}
+	  	],
+	  	"username": "Provision",
+	  	"ion_emoji": ":ghost:",
+	  	"channel": "#api_test"
+	  },
+	  "Broken": {
+	  		"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  		"attachments": [
+	  			{
+	  				"text":"This is attachments text",
+						"color":"#ff0000"
+	  			}
+	  		],
+	  		"username": "Provision",
+	  		"ion_emoji": ":ghost:",
+	  		"channel": "#api_test"
+	  	}
+	},
+
 	"watches" : [
 		{
 			"tags": ["^Openstack.*"],
-			"slackUrl": "_",
 			"transitions": ["Success","Failed"],
-			"colormapping":{"Success":"#00ff00", "Failed":"#ff0000", "Fixed":"#00fe00", "Broken":"#fe0000"},
-			"slackMsg": {
-				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
-				"username": "OpenStack",
-				"ion_emoji": ":ghost:",
-				"channel": "#api_test"
-			}
+			"slackUrl": "_",
+			"channel": "#api_test"
 		}
 		,{
 			"tags": ["^Provision.*"],
-			"slackUrl": "_",
 			"transitions": ["Success","Failed"],
-			"colormapping":{"Success":"#00ff00", "Failed":"#ff0000", "Fixed":"#00fe00", "Broken":"#fe0000"},
-			"slackMsg": {
-				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
-				"attachments": [
-					{
-						"text":"This is attachments text"
-					}
-				],
-				"username": "Provision",
-				"ion_emoji": ":ghost:",
-				"channel": "#api_test"
-			}
+			"slackUrl": "_",
+			"channel": "#api_test"
 		}
 		,{
 			"tags": ["^Trig.*","aka"],
-			"slackUrl": "_",
 			"transitions": ["Broken","Fixed"],
-			"colormapping":{"Success":"#00ff00", "Failed":"#ff0000", "Fixed":"#00fe00", "Broken":"#fe0000"},
-			"slackMsg": {
-				"text": "As of %time%, %project%, is %status% <%url%|%label%>",
-				"attachments": [
-					{
-						"text":"This is attachments text"
-					}
-				],
-				"username": "Provision",
-				"ion_emoji": ":ghost:",
-				"channel": "#api_test"
-			}
+			"slackUrl": "_",
+			"channel": "#api_test"
 		}
 	]
 }
