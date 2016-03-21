@@ -85,20 +85,22 @@ func (cc ccTray) publishChanges(projects []Project) {
 	for _, current := range projects {
 		if prev, ok := cc.previous[current.Name]; ok {
 			if prev != current {
-				log.Printf("Replacing %q - \"%q\" \n", current.Name, current.Transition)
+				log.Printf("Replacing %q - \"%q\" \n", current.Name, current.LastBuildStatus)
 				cc.previous[current.Name] = current
+				log.Printf("Status curr: %q prev: %q (%q)\n", current.LastBuildStatus, prev.LastBuildStatus, current.Activity)
 
 				if current.Activity == "Sleeping" {
 					current.Transition = current.LastBuildStatus
 					cc.Ch <- current
 				}
+
 				if prev.LastBuildStatus != current.LastBuildStatus {
 					if current.LastBuildStatus == "Success" {
 						current.Transition = "Fixed"
-					}
-					if current.LastBuildStatus == "Failed" {
+					} else {
 						current.Transition = "Broken"
 					}
+
 					if current.Activity == "Sleeping" {
 						cc.Ch <- current
 					}
