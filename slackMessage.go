@@ -22,7 +22,7 @@ type (
 		Text         string        `json:"text"`
 		Attachements []Attachement `json:"attachments"`
 		Username     string        `json:"username"`
-		IonEmoji     string        `json:"ion_emoji"`
+		IonEmoji     string        `json:"icon_emoji"`
 		Channel      string        `json:"channel"`
 	}
 )

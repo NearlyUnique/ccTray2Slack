@@ -10,7 +10,7 @@
 	  		}
 	  	],
 	  	"username": "Provision",
-	  	"ion_emoji": ":ghost:",
+	  	"icon_emoji": ":ghost:",
 	  	"channel": "#api_test"
 	  },
 	  "Failed": {
@@ -22,7 +22,7 @@
 	  		}
 	  	],
 	  	"username": "Provision",
-	  	"ion_emoji": ":ghost:",
+	  	"icon_emoji": ":ghost:",
 	  	"channel": "#api_test"
 	  },
 	  "Fixed": {
@@ -34,7 +34,7 @@
 	  		}
 	  	],
 	  	"username": "Provision",
-	  	"ion_emoji": ":ghost:",
+	  	"icon_emoji": ":ghost:",
 	  	"channel": "#api_test"
 	  },
 	  "Broken": {
@@ -46,7 +46,7 @@
 	  			}
 	  		],
 	  		"username": "Provision",
-	  		"ion_emoji": ":ghost:",
+	  		"icon_emoji": ":ghost:",
 	  		"channel": "#api_test"
 	  	}
 	},
