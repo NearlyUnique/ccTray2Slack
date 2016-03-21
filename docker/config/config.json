@@ -15,45 +15,57 @@
 		}
 	],
 	"slackmessages" : {
-		"Fixed" : {
-			"text": "Your project:  %project%, <%url%|%label%>",
-			"attachments": [
-				{
-					"text":"is %status% since %time%"
-				}
-			],
-			"username": "Username3",
-			"icon_emoji": "ghost",
+		"Fixed" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:"
+		}		,
+    "Broken" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:"
 		},
-    "Broken" : {
-			"text": "Your project:  %project%, <%url%|%label%>",
-			"attachments": [
-				{
-					"text":"is %status% since %time%"
-				}
-			],
-			"username": "Username3",
-			"icon_emoji": "ghost",
+		"Success" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:",
 		},
-		"Success" : {
-			"text": "Your project:  %project%, <%url%|%label%>",
-			"attachments": [
-				{
-					"text":"is %status% since %time%"
-				}
-			],
-			"username": "Username3",
-			"icon_emoji": "ghost",
-		},
-    "Failed" : {
-			"text": "Your project:  %project%, <%url%|%label%>",
-			"attachments": [
-				{
-					"text":"is %status% since %time%"
-				}
-			],
-			"username": "Username3",
-			"icon_emoji": "ghost",
+		"Failed" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:",
 		}
 	}
 }
