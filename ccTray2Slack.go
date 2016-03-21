@@ -35,13 +35,6 @@ func RunPollLoop(config Config, cc ccTray) {
 	for {
 		select {
 		case p := <-cc.Ch:
-			if ConfigChanged(commandLineArgs.configPath) {
-				if temp, err := LoadConfig(commandLineArgs.configPath); err == nil {
-					config = temp
-				} else {
-					log.Printf("Unable to read config file %s.", commandLineArgs.configPath)
-				}
-			}
 			if url, msg := config.Process(p); url != "" {
 				log.Printf("posting for %q\n", p.Name)
 				msg.UpdateMessage(p)
@@ -55,6 +48,13 @@ func RunPollLoop(config Config, cc ccTray) {
 			}
 			log.Println("Cycle complete")
 		case <-ticker.C:
+			if ConfigChanged(commandLineArgs.configPath) {
+				if temp, err := LoadConfig(commandLineArgs.configPath); err == nil {
+					config = temp
+				} else {
+					log.Printf("Unable to read config file %s.", commandLineArgs.configPath)
+				}
+			}
 			log.Println("checking ...")
 			go cc.GetLatest()
 		}
