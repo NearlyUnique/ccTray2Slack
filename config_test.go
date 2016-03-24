@@ -16,8 +16,8 @@ var (
 		Project{Name: "Project1", Transition: "Fixed"},
 		Project{Name: "Project1", Transition: "Success"},
 		Project{Name: "Notinconfig", Transition: "Failed"}}
-	expectedWatches = []Watch{Watch{[]string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test"},
-		Watch{[]string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
+	expectedWatches = []Watch{Watch{"Identifier 1", []string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test"},
+		Watch{"Identifier 2", []string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
 )
 
 func equalInt(t *testing.T, got int, expect int) {
@@ -26,20 +26,9 @@ func equalInt(t *testing.T, got int, expect int) {
 	}
 }
 
-func TestInSlice(t *testing.T) {
-
-	check := []string{"apa", "bepa", "cepa"}
-	if inSlice("feg", check) {
-		t.Error("feg is not in slice")
-	}
-	if !inSlice("bepa", check) {
-		t.Error("bepa is in slice")
-	}
-}
-
 func TestProcess(t *testing.T) {
 	fmt.Printf("length: %d\n", len(testProjects))
-	config, _ := LoadConfig("testdata/config2.json")
+	config, _ := LoadConfig("testdata/config2.d/")
 	// When Processing a correct project but with wrong Transiton
 	url, msg := config.Process(testProjects[0])
 	// ... return empty url
@@ -60,7 +49,7 @@ func TestProcess(t *testing.T) {
 
 func TestLoadConfig(t *testing.T) {
 
-	config, _ := LoadConfig("testdata/config1.json")
+	config, _ := LoadConfig("testdata/config1.d/")
 	if len(config.Watches) != 3 {
 		t.Errorf("Expected 3 watches got %q", len(config.Watches))
 	}

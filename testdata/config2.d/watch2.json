@@ -1,0 +1,10 @@
+{
+	"watches" : [
+   {
+			"tags": ["Project2", "Project3"],
+			"transitions": ["Success","Failed"],
+			"slackUrl": "project2_3",
+			"channel": "#api_test"
+		}
+	]
+}

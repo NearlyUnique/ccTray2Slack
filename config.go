@@ -23,6 +23,7 @@ type (
 	// SlckUrl is the web hook to slack to use adn channel the chanel to post messages to.
 	// Transitions define whcih transitions to report
 	Watch struct {
+		Identifier  string   `json:"identifier"`
 		ProjectRx   []string `json:"tags"`
 		SlackURL    string   `json:"slackUrl"`
 		Transitions []string `json:"transitions"`
@@ -38,13 +39,21 @@ func ConfigChanged(path string) bool {
 // LoadConfig reads the config from path given as argument
 func LoadConfig(path string) (Config, error) {
 	cfg := Config{}
-	file, err := ioutil.ReadFile(path)
+	cfg.SlackMessages = make(map[string]SlackMessage)
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return cfg, err
+	}
+	for _, file := range files {
 
-	if err == nil {
-		err = json.Unmarshal(file, &cfg)
-		log.Printf("Watching %d Project filters, %s", len(cfg.Watches), cfg.Watches[0].ProjectRx)
-	} else {
-		log.Printf("Unable to load config '%v'\n", err)
+		fileData, err := ioutil.ReadFile(path + file.Name())
+		if err == nil {
+			cfgTmp := Config{}
+			err = json.Unmarshal(fileData, &cfgTmp)
+			cfg.Add(cfgTmp)
+		} else {
+			log.Printf("Unable to load config '%v'\n", err)
+		}
 	}
 	return cfg, err
 }
@@ -56,6 +65,20 @@ func inSlice(check string, slice []string) bool {
 		}
 	}
 	return false
+}
+
+func (c *Config) Add(cfg Config) {
+	for _, remote := range cfg.Remotes {
+		c.Remotes = append(c.Remotes, remote)
+	}
+	for _, watch := range cfg.Watches {
+		c.Watches = append(c.Watches, watch)
+	}
+
+	for key, slackMessage := range cfg.SlackMessages {
+		c.SlackMessages[key] = slackMessage
+	}
+
 }
 
 // Process returns a url and template slackmessage to be used for sending messages to slack given a certain Project
