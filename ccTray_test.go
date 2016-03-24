@@ -67,5 +67,7 @@ func TestIt(t *testing.T) {
 
 	sut.GetLatest() // prime the system
 	sut.GetLatest() // get changes
+	equalInt(t, count, 2)
 	sut.GetLatest() // get changes
+	equalInt(t, count, 6)
 }
