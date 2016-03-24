@@ -57,11 +57,12 @@ func CreateCcTray(url string) ccTray {
 	}
 }
 
-func (cc ccTray) GetLatest() {
+func (cc ccTray) GetProjects() (Projects, error) {
 	var err error
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", cc.URL, nil)
 	req.SetBasicAuth(cc.Username, cc.Password)
+	p := Projects{}
 
 	if resp, err := client.Do(req); err == nil {
 		log.Printf("CC Tray http GET ok")
@@ -69,15 +70,22 @@ func (cc ccTray) GetLatest() {
 		log.Printf("Code: %d, %q\n", resp.StatusCode, resp.Status)
 
 		if body, err := ioutil.ReadAll(resp.Body); err == nil {
-			p := Projects{}
 			xml.Unmarshal(body, &p)
-			cc.publishChanges(p.Projects)
-			return
 		}
 	} else {
 		log.Fatalf("CC Tray http GET failed %v\n", err)
 	}
-	cc.ChErr <- err
+	return p, err
+}
+
+func (cc ccTray) GetLatest() {
+	p, err := cc.GetProjects()
+	if err == nil {
+		cc.publishChanges(p.Projects)
+	} else {
+		cc.ChErr <- err
+	}
+
 }
 
 func (cc ccTray) publishChanges(projects []Project) {
