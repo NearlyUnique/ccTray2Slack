@@ -78,6 +78,17 @@ func (cc ccTray) GetProjects() (Projects, error) {
 	return p, err
 }
 
+func (cc ccTray) ListProjects() {
+	p, err := cc.GetProjects()
+	if err == nil {
+		for _, project := range p.Projects {
+			fmt.Printf("%v\n", project.Name)
+		}
+	} else {
+		log.Fatalf("Error in ListProjects: %s\n", err)
+	}
+}
+
 func (cc ccTray) GetLatest() {
 	p, err := cc.GetProjects()
 	if err == nil {

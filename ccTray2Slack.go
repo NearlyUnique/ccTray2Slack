@@ -43,15 +43,41 @@ func main() {
 			Destination: &commandLineArgs.configPath,
 		},
 	}
-	app.Action = func(c *cli.Context) {
-		if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
-			cc = CreateCcTray(config.Remotes[0])
-			cc.Username = commandLineArgs.username
-			cc.Password = commandLineArgs.password
-			RunPollLoop(config, cc)
-		} else {
-			log.Fatal("Unable to load config stoping executions")
-		}
+	app.Commands = []cli.Command{
+		{
+			Name:  "start",
+			Usage: "Execute the loop to retrive data and publish",
+			Action: func(c *cli.Context) {
+				if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
+					cc = CreateCcTray(config.Remotes[0])
+					cc.Username = commandLineArgs.username
+					cc.Password = commandLineArgs.password
+					RunPollLoop(config, cc)
+				} else {
+					log.Fatal("Unable to load config stoping executions")
+				}
+			},
+		},
+		{
+			Name:  "config",
+			Usage: "Configuration command",
+			Subcommands: []cli.Command{
+				{
+					Name:  "projects-list",
+					Usage: "Print all availabale projects on ccTray endpoint",
+					Action: func(c *cli.Context) {
+						if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
+							cc = CreateCcTray(config.Remotes[0])
+							cc.Username = commandLineArgs.username
+							cc.Password = commandLineArgs.password
+							cc.ListProjects()
+						} else {
+							log.Fatal("Unable to load config stoping executions")
+						}
+					},
+				},
+			},
+		},
 	}
 	app.Run(os.Args)
 }
