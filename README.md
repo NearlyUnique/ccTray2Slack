@@ -1,8 +1,21 @@
+# ccTrayToSlack
+
 Poll ccTray endpoint (Cruise Control xml schema), find changes and post to yourcompany.slack.com
 
-Initially done as a learning exercise for me with golang
+## Getting Started
+
+### Configuration
 
 edit config.json to point to a slack integration point and alter the project regex to find interesting projects, changes are then sent to slack
+
+### Running
+
+
+## Running the tests
+
+````
+go test
+````
 
 TODO:
 - Use color to make failing and fixing more obvious
