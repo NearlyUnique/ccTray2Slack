@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 	"time"
+
+	"github.com/codegangsta/cli"
 )
 
 type CommandLineArgs struct {
@@ -15,17 +18,42 @@ type CommandLineArgs struct {
 var commandLineArgs CommandLineArgs
 
 func main() {
-	configPath, usr, pwd := parseCmdLine()
-	commandLineArgs = CommandLineArgs{configPath: configPath, username: usr, password: pwd}
 	var cc ccTray
-	if config, err := LoadConfig(configPath); err == nil {
-		cc = CreateCcTray(config.Remotes[0])
-		cc.Username = usr
-		cc.Password = pwd
-		RunPollLoop(config, cc)
-	} else {
-		log.Fatal("Unable to load config stoping executions")
+
+	app := cli.NewApp()
+	app.Name = "ccTraytoSlack"
+	app.Usage = "Parce ccTray data and send upates to you slack channels"
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:        "username",
+			Value:       "",
+			Usage:       "Username to authenticate to retrieve ccTray",
+			Destination: &commandLineArgs.username,
+		},
+		cli.StringFlag{
+			Name:        "password",
+			Value:       "",
+			Usage:       "Password to authenticate to retrieve ccTray",
+			Destination: &commandLineArgs.password,
+		},
+		cli.StringFlag{
+			Name:        "config",
+			Value:       "config.d",
+			Usage:       "Path to config files drop box folder",
+			Destination: &commandLineArgs.configPath,
+		},
 	}
+	app.Action = func(c *cli.Context) {
+		if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
+			cc = CreateCcTray(config.Remotes[0])
+			cc.Username = commandLineArgs.username
+			cc.Password = commandLineArgs.password
+			RunPollLoop(config, cc)
+		} else {
+			log.Fatal("Unable to load config stoping executions")
+		}
+	}
+	app.Run(os.Args)
 }
 
 func RunPollLoop(config Config, cc ccTray) {
