@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func equalString(t *testing.T, got string, expect string) {
 	if got != expect {
@@ -27,7 +24,6 @@ func equalInt(t *testing.T, got int, expect int) {
 }
 
 func TestProcess(t *testing.T) {
-	fmt.Printf("length: %d\n", len(testProjects))
 	config, _ := LoadConfig("testdata/config2.d/")
 	// When Processing a correct project but with wrong Transiton
 	url, msg := config.Process(testProjects[0])
