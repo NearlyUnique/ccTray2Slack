@@ -6,11 +6,11 @@ Poll ccTray endpoint (Cruise Control xml schema), find changes and post to yourc
 
 ### Slack web-hook
 
-Create a custom slack web-hook in your company slack and find out the url to use to post.
+Create a custom slack web-hook in your company slack and find out the URL to use to post.
 
 ### Configuration
 
-Output an example config with the command (replacing the remote arg with your cttray url)
+Output an example configuration with the command (replacing the remote argument with your cctray URL and slack with the custom web-hook to your slack)
 
 ````
 ./ccTrayToSlack config default --remote http://localhost:8153/go/cctray.xml --slack http://slack.com > config.d/config
@@ -24,7 +24,7 @@ Once your configuration have a remote specified you can get the complete list of
 
 Use the list to update the watches to monitor the projects you want to get notifications about.
 
-You can adapt the way the slack messages look in your config file
+You can adapt the way the slack messages look in your configuration file
 
 The following keywords in Text and Titles will be replaced by data from your ccTray output:
 * %time%
@@ -64,6 +64,7 @@ go test
 ````
 
 # TODO:
+
 - Make it possible to specify multiple remotes
 - make poll time configurable
 - refactor to make the responsibilities for types clearer
