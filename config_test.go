@@ -4,7 +4,7 @@ import "testing"
 
 func equalString(t *testing.T, got string, expect string) {
 	if got != expect {
-		t.Errorf("Expected %s got %s", expect, got)
+		t.Errorf("Expected '%s' got '%s'", expect, got)
 	}
 }
 
