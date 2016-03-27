@@ -27,8 +27,8 @@
 		  ],
 		  "username": "GO CD Integration",
 		  "icon_emoji": ":building_construction:"
-		}		,
-    "Broken" :
+		},
+		"Broken" :
 		{
 		  "text": "New update from your build-server",
 		  "attachments": [
