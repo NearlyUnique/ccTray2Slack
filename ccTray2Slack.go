@@ -77,6 +77,13 @@ func main() {
 					},
 				},
 				{
+					Name:  "verify",
+					Usage: "Verify all configuration files in the config folder",
+					Action: func(c *cli.Context) {
+						VerifyConfig(commandLineArgs.configPath)
+					},
+				},
+				{
 					Name:  "print-default",
 					Usage: "Print a default configfile",
 					Flags: []cli.Flag{

@@ -38,19 +38,19 @@ type (
 )
 
 var (
-	defaultRemotes = []string{"htttp://yourremotecctray:8153/go"}
+	defaultRemotes = []string{"http://localhost:8153/go/cctray.xml"}
 	defaultWatches = []Watch{
 		Watch{"Identifier",
 			[]string{"Project1", "Project2"},
-			"slackURL",
+			"https://hooks.slack.com/services/",
 			[]string{"Fixed", "Broken"},
-			"#slack_channel",
+			"#api_test",
 		},
 		Watch{"Identifier2",
 			[]string{"Project3", "Project4"},
-			"slackURL",
+			"https://hooks.slack.com/services/",
 			[]string{"Success", "Failure"},
-			"#slack_channel",
+			"#api_test",
 		},
 	}
 )
@@ -74,6 +74,35 @@ func ConfigChanged(path string) bool {
 	return true
 }
 
+func ReadConfigFile(path string) (Config, error) {
+	var cfgTmp Config
+	log.Printf("Verifying \"%v\"\n", path)
+	fileData, err := ioutil.ReadFile(path)
+	if err == nil {
+		err = json.Unmarshal(fileData, &cfgTmp)
+		if err != nil {
+			log.Printf("Unable to parse content ''%v'\n", err)
+			log.Printf("%v", string(fileData))
+		}
+	} else {
+		log.Printf("Unable to load file '%v'\n", err)
+	}
+	return cfgTmp, err
+}
+
+func VerifyConfig(path string) {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return
+	}
+	for _, file := range files {
+		_, err := ReadConfigFile(path + file.Name())
+		if err != nil {
+			log.Fatalf("Config verifiactaion failed: '%v'", err)
+		}
+	}
+}
+
 // LoadConfig reads the config from path given as argument
 func LoadConfig(path string) (Config, error) {
 	cfg := Config{}
@@ -83,14 +112,8 @@ func LoadConfig(path string) (Config, error) {
 		return cfg, err
 	}
 	for _, file := range files {
-		fileData, err := ioutil.ReadFile(path + file.Name())
-		if err == nil {
-			cfgTmp := Config{}
-			err = json.Unmarshal(fileData, &cfgTmp)
-			cfg.Add(cfgTmp)
-		} else {
-			log.Printf("Unable to load config '%v'\n", err)
-		}
+		cfgTmp, _ := ReadConfigFile(path + file.Name())
+		cfg.Add(cfgTmp)
 	}
 	return cfg, err
 }
