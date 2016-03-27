@@ -4,12 +4,58 @@ Poll ccTray endpoint (Cruise Control xml schema), find changes and post to yourc
 
 ## Getting Started
 
+### Slack web-hook
+
+Create a custom slack web-hook in your company slack and find out the url to use to post.
+
 ### Configuration
 
-edit config.json to point to a slack integration point and alter the project regex to find interesting projects, changes are then sent to slack
+Output an example config with the command (replacing the remote arg with your cttray url)
+
+````
+./ccTrayToSlack config default --remote http://localhost:8153/go/cctray.xml --slack http://slack.com > config.d/config
+````
+
+Once your configuration have a remote specified you can get the complete list of projects in your ccTray use the command:
+
+````
+./ccTray2Slack --config config.d/ --username <username> --password <password> config projects
+````
+
+Use the list to update the watches to monitor the projects you want to get notifications about.
+
+You can adapt the way the slack messages look in your config file
+
+The following keywords in Text and Titles will be replaced by data from your ccTray output:
+* %time%
+* %project%
+* %status%
+* %url%
+* %label%
+
+Verify the configuration
+
+````
+./ccTray2Slack --config config.d/ --username <username> --password <password> config verify
+````
 
 ### Running
 
+#### Command line
+
+````
+./ccTray2Slack --config config.d/ --username <username> --password <password> start
+````
+
+#### Docker
+
+Drop the configuration in the folder docker/config/
+
+````
+cd docker
+docker-compose build
+docker-compose up -d
+````
 
 ## Running the tests
 
@@ -17,11 +63,7 @@ edit config.json to point to a slack integration point and alter the project reg
 go test
 ````
 
-TODO:
-- Use color to make failing and fixing more obvious
-- deal with http authentication to get ccTray xml
+# TODO:
+- Make it possible to specify multiple remotes
 - make poll time configurable
-- make the intersting map property only store interesting things according to the process func
 - refactor to make the responsibilities for types clearer
-- try and fond someone willing to review it to make it 'idomatic go'
-- add per status/avtivity slack messages
