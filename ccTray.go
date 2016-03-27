@@ -3,10 +3,14 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
+
+var out io.Writer = os.Stdout
 
 type (
 	ccTray struct {
@@ -82,7 +86,7 @@ func (cc ccTray) ListProjects() {
 	p, err := cc.GetProjects()
 	if err == nil {
 		for _, project := range p.Projects {
-			fmt.Printf("%v\n", project.Name)
+			fmt.Fprintf(out, "%v\n", project.Name)
 		}
 	} else {
 		log.Fatalf("Error in ListProjects: %s\n", err)
