@@ -31,6 +31,7 @@ type (
 		Channel     string   `json:"channel"`
 	}
 
+	//DefaultConfigArgs holds arguments to  be passed to PrintDefaultConfig
 	DefaultConfigArgs struct {
 		RemoteURL string
 		SlackHook string
@@ -55,6 +56,7 @@ var (
 	}
 )
 
+// PrintDefaultConfig prints a default configuration to stdout
 func PrintDefaultConfig(args DefaultConfigArgs) {
 	c := Config{}
 	c.Watches = defaultWatches
@@ -74,7 +76,7 @@ func ConfigChanged(path string) bool {
 	return true
 }
 
-func ReadConfigFile(path string) (Config, error) {
+func readConfigFile(path string) (Config, error) {
 	var cfgTmp Config
 	log.Printf("Verifying \"%v\"\n", path)
 	fileData, err := ioutil.ReadFile(path)
@@ -90,13 +92,15 @@ func ReadConfigFile(path string) (Config, error) {
 	return cfgTmp, err
 }
 
+//VerifyConfig verifies all configuraion files in a folder by reading them
+// exits with a fatal log if any configuration has syntax error
 func VerifyConfig(path string) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return
 	}
 	for _, file := range files {
-		_, err := ReadConfigFile(path + file.Name())
+		_, err := readConfigFile(path + file.Name())
 		if err != nil {
 			log.Fatalf("Config verifiactaion failed: '%v'", err)
 		}
@@ -112,7 +116,7 @@ func LoadConfig(path string) (Config, error) {
 		return cfg, err
 	}
 	for _, file := range files {
-		cfgTmp, _ := ReadConfigFile(path + file.Name())
+		cfgTmp, _ := readConfigFile(path + file.Name())
 		cfg.Add(cfgTmp)
 	}
 	return cfg, err
@@ -127,6 +131,7 @@ func inSlice(check string, slice []string) bool {
 	return false
 }
 
+//Add adds configuration from one Config-stuct to another struct
 func (c *Config) Add(cfg Config) {
 	for _, remote := range cfg.Remotes {
 		c.Remotes = append(c.Remotes, remote)
