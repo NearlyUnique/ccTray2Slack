@@ -6,7 +6,7 @@ Poll ccTray endpoint (Cruise Control xml schema), find changes and post to yourc
 
 ### Slack web-hook
 
-Create a custom slack web-hook in your company slack and find out the URL to use to post.
+Create a custom slack web-hook in your company slack and find out the URL to use to post to the channels.
 
 ### Configuration
 
