@@ -86,7 +86,7 @@ func (cc ccTray) ListProjects() {
 	p, err := cc.GetProjects()
 	if err == nil {
 		for _, project := range p.Projects {
-			fmt.Fprintf(out, "%v\n", project.Name)
+			fmt.Fprintf(out, "\"%v\",\n", project.Name)
 		}
 	} else {
 		log.Fatalf("Error in ListProjects: %s\n", err)

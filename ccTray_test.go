@@ -54,7 +54,7 @@ func TestListProjects(t *testing.T) {
 	buf := &bytes.Buffer{}
 	out = buf
 	sut.ListProjects()
-	expect := "Project 1\nProject 2\nProject 3\n"
+	expect := "\"Project 1\",\n\"Project 2\",\n\"Project 3\",\n"
 	equalString(t, buf.String(), expect)
 }
 
