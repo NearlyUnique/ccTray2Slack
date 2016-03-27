@@ -54,6 +54,9 @@ Drop the configuration in the folder docker/config/
 ````
 cd docker
 docker-compose build
+````
+Update docker-compose.yml with user-name password and what release version to start with
+````
 docker-compose up -d
 ````
 
