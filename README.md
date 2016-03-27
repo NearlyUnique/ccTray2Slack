@@ -69,5 +69,4 @@ go test
 # TODO:
 
 - Make it possible to specify multiple remotes
-- make poll time configurable
 - refactor to make the responsibilities for types clearer

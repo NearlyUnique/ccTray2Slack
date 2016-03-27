@@ -8,10 +8,12 @@ import (
 	"github.com/codegangsta/cli"
 )
 
+//CommandLineArgs stores the arguments given on commadn line for later use
 type CommandLineArgs struct {
 	password   string
 	username   string
 	configPath string
+	pollTime   time.Duration
 }
 
 var commandLineArgs CommandLineArgs
@@ -46,6 +48,14 @@ func main() {
 		{
 			Name:  "start",
 			Usage: "Execute the loop to retrive data and publish",
+			Flags: []cli.Flag{
+				cli.DurationFlag{
+					Name:        "pollinterval",
+					Usage:       "Sett the poll inteval in seconds",
+					Value:       10 * time.Second,
+					Destination: &commandLineArgs.pollTime,
+				},
+			},
 			Action: func(c *cli.Context) {
 				if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = CreateCcTray(config.Remotes[0])
@@ -109,7 +119,7 @@ func main() {
 }
 
 func runPollLoop(config Config, cc ccTray) {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(commandLineArgs.pollTime)
 	go cc.GetLatest()
 
 	for {
