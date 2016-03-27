@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"os"
 	"time"
@@ -52,7 +51,7 @@ func main() {
 					cc = CreateCcTray(config.Remotes[0])
 					cc.Username = commandLineArgs.username
 					cc.Password = commandLineArgs.password
-					RunPollLoop(config, cc)
+					runPollLoop(config, cc)
 				} else {
 					log.Fatal("Unable to load config stoping executions")
 				}
@@ -109,7 +108,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func RunPollLoop(config Config, cc ccTray) {
+func runPollLoop(config Config, cc ccTray) {
 	ticker := time.NewTicker(10 * time.Second)
 	go cc.GetLatest()
 
@@ -140,18 +139,4 @@ func RunPollLoop(config Config, cc ccTray) {
 			go cc.GetLatest()
 		}
 	}
-}
-
-func parseCmdLine() (configPath, user, password string) {
-	path := flag.String("config", "config.json", "config for project filter and Slack integration")
-	usr := flag.String("username", "", "cctray server account name")
-	pwd := flag.String("password", "", "cctray server account password")
-
-	flag.Parse()
-
-	if *path == "" {
-		log.Fatal("config path must be set")
-	}
-
-	return *path, *usr, *pwd
 }
