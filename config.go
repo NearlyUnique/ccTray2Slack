@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"regexp"
+	"strings"
 )
 
 type (
@@ -79,6 +80,9 @@ func ConfigChanged(path string) bool {
 func readConfigFile(path string) (Config, error) {
 	var cfgTmp Config
 	log.Printf("Verifying \"%v\"\n", path)
+	if !strings.HasSuffix(path, ".json") {
+		log.Printf("Ignoring file with wrong type \n")
+	}
 	fileData, err := ioutil.ReadFile(path)
 	if err == nil {
 		err = json.Unmarshal(fileData, &cfgTmp)
