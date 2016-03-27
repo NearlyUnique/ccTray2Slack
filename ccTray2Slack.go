@@ -63,7 +63,7 @@ func main() {
 			Usage: "Configuration command",
 			Subcommands: []cli.Command{
 				{
-					Name:  "projects-list",
+					Name:  "projects",
 					Usage: "Print all availabale projects on ccTray endpoint",
 					Action: func(c *cli.Context) {
 						if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
@@ -84,22 +84,22 @@ func main() {
 					},
 				},
 				{
-					Name:  "print-default",
+					Name:  "default",
 					Usage: "Print a default configfile",
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:  "slackURL",
+							Name:  "slack",
 							Value: "http://slack.com/",
-							Usage: "slackURL to use when outputting default config",
+							Usage: "slack-url to use when outputting default config",
 						},
 						cli.StringFlag{
 							Name:  "remote",
-							Value: "http://localhost:8153/go/ccTray.xml",
+							Value: "http://localhost:8153/go/cctray.xml",
 							Usage: "RemoteURL to use when outputting default config",
 						},
 					},
 					Action: func(c *cli.Context) {
-						args := DefaultConfigArgs{RemoteURL: c.String("remote"), SlackHook: c.String("slackURL")}
+						args := DefaultConfigArgs{RemoteURL: c.String("remote"), SlackHook: c.String("slack")}
 						PrintDefaultConfig(args)
 					},
 				},
