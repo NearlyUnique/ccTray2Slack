@@ -1,21 +1,12 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"os"
 	"time"
 
 	"github.com/codegangsta/cli"
 )
-
-type CommandLineArgs struct {
-	password   string
-	username   string
-	configPath string
-}
-
-var commandLineArgs CommandLineArgs
 
 func main() {
 	var cc ccTray
@@ -25,22 +16,19 @@ func main() {
 	app.Usage = "Parce ccTray data and send upates to you slack channels"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:        "username",
-			Value:       "",
-			Usage:       "Username to authenticate to retrieve ccTray",
-			Destination: &commandLineArgs.username,
+			Name:  "username",
+			Value: "",
+			Usage: "Username to authenticate to retrieve ccTray",
 		},
 		cli.StringFlag{
-			Name:        "password",
-			Value:       "",
-			Usage:       "Password to authenticate to retrieve ccTray",
-			Destination: &commandLineArgs.password,
+			Name:  "password",
+			Value: "",
+			Usage: "Password to authenticate to retrieve ccTray",
 		},
 		cli.StringFlag{
-			Name:        "config",
-			Value:       "config.d",
-			Usage:       "Path to config files drop box folder",
-			Destination: &commandLineArgs.configPath,
+			Name:  "config",
+			Value: "config.d",
+			Usage: "Path to config files drop box folder",
 		},
 	}
 	app.Commands = []cli.Command{
@@ -48,11 +36,11 @@ func main() {
 			Name:  "start",
 			Usage: "Execute the loop to retrive data and publish",
 			Action: func(c *cli.Context) {
-				if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
+				if config, err := LoadConfig(c.String("config")); err == nil {
 					cc = CreateCcTray(config.Remotes[0])
-					cc.Username = commandLineArgs.username
-					cc.Password = commandLineArgs.password
-					RunPollLoop(config, cc)
+					cc.Username = c.String("username")
+					cc.Password = c.String("password")
+					RunPollLoop(config, cc, c)
 				} else {
 					log.Fatal("Unable to load config stoping executions")
 				}
@@ -66,10 +54,10 @@ func main() {
 					Name:  "projects",
 					Usage: "Print all availabale projects on ccTray endpoint",
 					Action: func(c *cli.Context) {
-						if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
+						if config, err := LoadConfig(c.String("config")); err == nil {
 							cc = CreateCcTray(config.Remotes[0])
-							cc.Username = commandLineArgs.username
-							cc.Password = commandLineArgs.password
+							cc.Username = c.String("username")
+							cc.Password = c.String("password")
 							cc.ListProjects()
 						} else {
 							log.Fatal("Unable to load config stoping executions")
@@ -80,7 +68,7 @@ func main() {
 					Name:  "verify",
 					Usage: "Verify all configuration files in the config folder",
 					Action: func(c *cli.Context) {
-						VerifyConfig(commandLineArgs.configPath)
+						VerifyConfig(c.String("config"))
 					},
 				},
 				{
@@ -109,7 +97,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func RunPollLoop(config Config, cc ccTray) {
+func RunPollLoop(config Config, cc ccTray, c *cli.Context) {
 	ticker := time.NewTicker(10 * time.Second)
 	go cc.GetLatest()
 
@@ -129,29 +117,15 @@ func RunPollLoop(config Config, cc ccTray) {
 			}
 			log.Println("Cycle complete")
 		case <-ticker.C:
-			if ConfigChanged(commandLineArgs.configPath) {
-				if temp, err := LoadConfig(commandLineArgs.configPath); err == nil {
+			if ConfigChanged(c.String("config")) {
+				if temp, err := LoadConfig(c.String("config")); err == nil {
 					config = temp
 				} else {
-					log.Printf("Unable to read config file %s.", commandLineArgs.configPath)
+					log.Printf("Unable to read config file %s.", c.String("config"))
 				}
 			}
 			log.Println("checking ...")
 			go cc.GetLatest()
 		}
 	}
-}
-
-func parseCmdLine() (configPath, user, password string) {
-	path := flag.String("config", "config.json", "config for project filter and Slack integration")
-	usr := flag.String("username", "", "cctray server account name")
-	pwd := flag.String("password", "", "cctray server account password")
-
-	flag.Parse()
-
-	if *path == "" {
-		log.Fatal("config path must be set")
-	}
-
-	return *path, *usr, *pwd
 }
