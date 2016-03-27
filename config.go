@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -29,7 +30,44 @@ type (
 		Transitions []string `json:"transitions"`
 		Channel     string   `json:"channel"`
 	}
+
+	DefaultConfigArgs struct {
+		RemoteURL string
+		SlackHook string
+	}
 )
+
+var (
+	defaultRemotes = []string{"htttp://yourremotecctray:8153/go"}
+	defaultWatches = []Watch{
+		Watch{"Identifier",
+			[]string{"Project1", "Project2"},
+			"slackURL",
+			[]string{"Fixed", "Broken"},
+			"#slack_channel",
+		},
+		Watch{"Identifier2",
+			[]string{"Project3", "Project4"},
+			"slackURL",
+			[]string{"Success", "Failure"},
+			"#slack_channel",
+		},
+	}
+)
+
+func PrintDefaultConfig(args DefaultConfigArgs) {
+	c := Config{}
+	c.Watches = defaultWatches
+	for i := range c.Watches {
+		c.Watches[i].SlackURL = args.SlackHook
+	}
+	c.Remotes = defaultRemotes
+	c.Remotes[0] = args.RemoteURL
+	c.SlackMessages = make(map[string]SlackMessage)
+	c.SlackMessages = defaultSlackMessages
+	b, _ := json.MarshalIndent(c, " ", " ")
+	fmt.Printf("%v", string(b))
+}
 
 // ConfigChanged returns true
 func ConfigChanged(path string) bool {
@@ -45,7 +83,6 @@ func LoadConfig(path string) (Config, error) {
 		return cfg, err
 	}
 	for _, file := range files {
-
 		fileData, err := ioutil.ReadFile(path + file.Name())
 		if err == nil {
 			cfgTmp := Config{}

@@ -28,7 +28,37 @@ type (
 )
 
 var (
-	rx = regexp.MustCompile("%.*?%")
+	rx                   = regexp.MustCompile("%.*?%")
+	defaultSlackMessages = map[string]SlackMessage{
+		"Success": SlackMessage{
+			"Success text",
+			[]Attachement{Attachement{"Title", "#ff0000", "text"}},
+			"Username",
+			"Icon",
+			"",
+		},
+		"Failure": SlackMessage{
+			"Failure text",
+			[]Attachement{Attachement{"Title", "#ff0000", "text"}},
+			"Username",
+			"Icon",
+			"",
+		},
+		"Broken": SlackMessage{
+			"Broken text",
+			[]Attachement{Attachement{"Title", "#ff0000", "text"}},
+			"Username",
+			"Icon",
+			"",
+		},
+		"Fixed": SlackMessage{
+			"Fixed text",
+			[]Attachement{Attachement{"Title", "#ff0000", "text"}},
+			"Username",
+			"Icon",
+			"",
+		},
+	}
 )
 
 func replaceString(s string, p Project) string {

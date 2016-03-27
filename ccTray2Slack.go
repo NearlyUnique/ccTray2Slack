@@ -76,6 +76,26 @@ func main() {
 						}
 					},
 				},
+				{
+					Name:  "print-default",
+					Usage: "Print a default configfile",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "slackURL",
+							Value: "http://slack.com/",
+							Usage: "slackURL to use when outputting default config",
+						},
+						cli.StringFlag{
+							Name:  "remote",
+							Value: "http://localhost:8153/go/ccTray.xml",
+							Usage: "RemoteURL to use when outputting default config",
+						},
+					},
+					Action: func(c *cli.Context) {
+						args := DefaultConfigArgs{RemoteURL: c.String("remote"), SlackHook: c.String("slackURL")}
+						PrintDefaultConfig(args)
+					},
+				},
 			},
 		},
 	}
