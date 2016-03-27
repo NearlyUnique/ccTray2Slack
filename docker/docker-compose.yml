@@ -3,7 +3,6 @@ cctray_to_slack:
   volumes:
     - ./config:/root/config
   environment:
-    - VERSION=v0.1.0
+    - VERSION=v0.1.15
     - USERNAME=user
     - PASSWORD=password
-
