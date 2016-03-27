@@ -52,8 +52,8 @@
 		  }
 		  ],
 		  "username": "GO CD Integration",
-		  "icon_emoji": ":building_construction:",
-		},
+		  "icon_emoji": ":building_construction:"
+				},
 		"Failed" :
 		{
 		  "text": "New update from your build-server",
@@ -65,7 +65,7 @@
 		  }
 		  ],
 		  "username": "GO CD Integration",
-		  "icon_emoji": ":building_construction:",
+		  "icon_emoji": ":building_construction:"
 		}
 	}
 }
