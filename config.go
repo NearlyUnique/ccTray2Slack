@@ -120,7 +120,7 @@ func LoadConfig(path string) (Config, error) {
 		return cfg, err
 	}
 	for _, file := range files {
-		cfgTmp, _ := readConfigFile(path + file.Name())
+		cfgTmp, _ := readConfigFile(path + "/" + file.Name())
 		cfg.Add(cfgTmp)
 	}
 	return cfg, err

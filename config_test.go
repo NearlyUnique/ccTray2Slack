@@ -24,7 +24,7 @@ func equalInt(t *testing.T, got int, expect int) {
 }
 
 func TestProcess(t *testing.T) {
-	config, _ := LoadConfig("testdata/config2.d/")
+	config, _ := LoadConfig("testdata/config2.d")
 	// When Processing a correct project but with wrong Transiton
 	url, msg := config.Process(testProjects[0])
 	// ... return empty url
