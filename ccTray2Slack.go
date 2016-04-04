@@ -82,7 +82,7 @@ func main() {
 					cc.Password = commandLineArgs.password
 					runPollLoop(config, cc)
 				} else {
-					log.Fatalf("Unable to load config %v, %v ",commandLineArgs.configPath, err)
+					log.Fatalf("Unable to load config %v, %v ", commandLineArgs.configPath, err)
 				}
 			},
 		},
@@ -100,7 +100,7 @@ func main() {
 							cc.Password = commandLineArgs.password
 							cc.ListProjects()
 						} else {
-							log.Fatalf("Unable to load config %v, %v ",commandLineArgs.configPath, err)
+							log.Fatalf("Unable to load config %v, %v ", commandLineArgs.configPath, err)
 						}
 					},
 				},
