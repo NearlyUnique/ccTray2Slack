@@ -24,7 +24,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "ccTraytoSlack"
-	app.Usage = "Parce ccTray data and send upates to you slack channels"
+	app.Usage = "Parse ccTray data and send upates to you slack channels"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "username",
