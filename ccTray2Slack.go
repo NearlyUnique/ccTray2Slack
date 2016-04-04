@@ -52,7 +52,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.DurationFlag{
 					Name:        "pollinterval",
-					Usage:       "Sett the poll inteval in seconds",
+					Usage:       "Set the poll inteval in seconds",
 					Value:       10 * time.Second,
 					Destination: &commandLineArgs.pollTime,
 				},
@@ -82,7 +82,7 @@ func main() {
 					cc.Password = commandLineArgs.password
 					runPollLoop(config, cc)
 				} else {
-					log.Fatal("Unable to load config stoping executions")
+					log.Fatalf("Unable to load config %v, %v ",commandLineArgs.configPath, err)
 				}
 			},
 		},
@@ -100,7 +100,7 @@ func main() {
 							cc.Password = commandLineArgs.password
 							cc.ListProjects()
 						} else {
-							log.Fatal("Unable to load config stoping executions")
+							log.Fatalf("Unable to load config %v, %v ",commandLineArgs.configPath, err)
 						}
 					},
 				},
