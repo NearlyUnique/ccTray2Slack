@@ -13,6 +13,7 @@ type CommandLineArgs struct {
 	password   string
 	username   string
 	configPath string
+	logFile    string
 	pollTime   time.Duration
 }
 
@@ -55,8 +56,26 @@ func main() {
 					Value:       10 * time.Second,
 					Destination: &commandLineArgs.pollTime,
 				},
+				cli.StringFlag{
+					Name:        "log",
+					Value:       "",
+					Usage:       "Path to log-file",
+					Destination: &commandLineArgs.logFile,
+				},
 			},
 			Action: func(c *cli.Context) {
+
+				if commandLineArgs.logFile != "" {
+					logFile, err := os.OpenFile(commandLineArgs.logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+					if err != nil {
+						log.Fatalf("error opening file:	 \"%v\" %v", commandLineArgs.logFile, err)
+					}
+					defer logFile.Close()
+
+					log.SetOutput(logFile)
+					log.Println("Startup with log file")
+				}
+
 				if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = CreateCcTray(config.Remotes[0])
 					cc.Username = commandLineArgs.username
