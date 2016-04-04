@@ -113,16 +113,29 @@ func VerifyConfig(path string) {
 }
 
 func isDirectory(path string) (bool, error) {
+	isDir := false
 	fileInfo, err := os.Stat(path)
-	return fileInfo.IsDir(), err
+	if err == nil {
+		isDir = fileInfo.IsDir()
+	}
+	return isDir, err
 }
 
 // LoadConfig reads the config from path given as argument
 func LoadConfig(path string) (Config, error) {
-	if dir, _ := isDirectory(path); dir == false {
-		log.Fatalf("Config path \"%v\" is a file not a directory!", path)
-	}
 	cfg := Config{}
+
+	dir, err := isDirectory(path)
+	if err != nil {
+		log.Printf("Config directory \"%v\" is has error: %v ", path, err)
+		return cfg, err
+	} else {
+		if dir == false {
+			log.Printf("Config directory \"%v\" is a file not a direcory ", path)
+			return cfg, err
+		}
+	}
+
 	cfg.SlackMessages = make(map[string]SlackMessage)
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
