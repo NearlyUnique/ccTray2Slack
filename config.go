@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -111,8 +112,16 @@ func VerifyConfig(path string) {
 	}
 }
 
+func isDirectory(path string) (bool, error) {
+	fileInfo, err := os.Stat(path)
+	return fileInfo.IsDir(), err
+}
+
 // LoadConfig reads the config from path given as argument
 func LoadConfig(path string) (Config, error) {
+	if dir, _ := isDirectory(path); dir == false {
+		log.Fatalf("Config path \"%v\" is a file not a directory!", path)
+	}
 	cfg := Config{}
 	cfg.SlackMessages = make(map[string]SlackMessage)
 	files, err := ioutil.ReadDir(path)
