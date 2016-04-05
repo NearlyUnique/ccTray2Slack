@@ -41,7 +41,7 @@ func main() {
 		cli.StringFlag{
 			Name:        "config",
 			Value:       "config.d",
-			Usage:       "Path to config files drop box folder",
+			Usage:       "Path to config files drop box folder or single file",
 			Destination: &commandLineArgs.configPath,
 		},
 	}
@@ -108,7 +108,9 @@ func main() {
 					Name:  "verify",
 					Usage: "Verify all configuration files in the config folder",
 					Action: func(c *cli.Context) {
-						VerifyConfig(commandLineArgs.configPath)
+						if _, err := LoadConfig(commandLineArgs.configPath); err != nil {
+							log.Fatal("Configuration verification failed")
+						}
 					},
 				},
 				{

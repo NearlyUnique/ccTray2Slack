@@ -81,9 +81,6 @@ func ConfigChanged(path string) bool {
 func readConfigFile(path string) (Config, error) {
 	var cfgTmp Config
 	log.Printf("Verifying \"%v\"\n", path)
-	if !strings.HasSuffix(path, ".json") {
-		log.Printf("Ignoring file with wrong type \n")
-	}
 	fileData, err := ioutil.ReadFile(path)
 	if err == nil {
 		err = json.Unmarshal(fileData, &cfgTmp)
@@ -97,54 +94,51 @@ func readConfigFile(path string) (Config, error) {
 	return cfgTmp, err
 }
 
-//VerifyConfig verifies all configuraion files in a folder by reading them
-// exits with a fatal log if any configuration has syntax error
-func VerifyConfig(path string) {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return
-	}
-	for _, file := range files {
-		_, err := readConfigFile(path + file.Name())
-		if err != nil {
-			log.Fatalf("Config verifiactaion failed: '%v'", err)
-		}
-	}
-}
+func getConfigFiles(path string) ([]string, error) {
 
-func isDirectory(path string) (bool, error) {
-	isDir := false
-	fileInfo, err := os.Stat(path)
-	if err == nil {
-		isDir = fileInfo.IsDir()
+	fileinfo, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		log.Printf("Config directory \"%v\" has error: %v ", path, err)
+		return []string{}, err
 	}
-	return isDir, err
+
+	if !fileinfo.IsDir() {
+		return []string{path}, err
+	}
+
+	fileinfos, err := ioutil.ReadDir(path)
+	if err != nil {
+		return []string{}, err
+	}
+
+	var files []string
+	for _, file := range fileinfos {
+		fullfile := path + "/" + file.Name()
+		if !strings.HasSuffix(fullfile, ".json") {
+			log.Printf("Ignoring file %v with wrong type \n", fullfile)
+			continue
+		}
+
+		files = append(files, fullfile)
+	}
+	return files, err
 }
 
 // LoadConfig reads the config from path given as argument
 func LoadConfig(path string) (Config, error) {
 	cfg := Config{}
+	cfg.SlackMessages = make(map[string]SlackMessage)
 
-	dir, err := isDirectory(path)
-	if err != nil {
-		log.Printf("Config directory \"%v\" is has error: %v ", path, err)
-		return cfg, err
-	} else {
-		if dir == false {
-			log.Printf("Config directory \"%v\" is a file not a direcory ", path)
+	files, err := getConfigFiles(path)
+	for _, file := range files {
+		if cfgTmp, err := readConfigFile(file); err == nil {
+			cfg.Add(cfgTmp)
+		} else {
+			cfg = Config{}
 			return cfg, err
 		}
 	}
 
-	cfg.SlackMessages = make(map[string]SlackMessage)
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return cfg, err
-	}
-	for _, file := range files {
-		cfgTmp, _ := readConfigFile(path + "/" + file.Name())
-		cfg.Add(cfgTmp)
-	}
 	return cfg, err
 }
 
