@@ -2,7 +2,7 @@ cctray_to_slack:
   build: .
   volumes:
     - ./config:/root/config
+    - ./log:/root/log
   environment:
-    - VERSION=v0.1.15
-    - USERNAME=user
-    - PASSWORD=password
+    - VERSION=v0.1.16
+    - LOGFILE=/root/log/ccTray2Slack.log
