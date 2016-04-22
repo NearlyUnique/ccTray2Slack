@@ -4,5 +4,7 @@ cctray_to_slack:
     - ./config:/root/config
     - ./log:/root/log
   environment:
+    - USERNAME=user
+    - PASSWORD=password
     - VERSION=v0.1.16
     - LOGFILE=/root/log/ccTray2Slack.log

@@ -118,7 +118,6 @@ func getConfigFiles(path string) ([]string, error) {
 			log.Printf("Ignoring file %v with wrong type \n", fullfile)
 			continue
 		}
-
 		files = append(files, fullfile)
 	}
 	return files, err

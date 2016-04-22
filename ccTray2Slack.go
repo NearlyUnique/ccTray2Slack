@@ -19,6 +19,19 @@ type CommandLineArgs struct {
 
 var commandLineArgs CommandLineArgs
 
+func setupLog(logPath string) {
+	if logPath != "" {
+		logFile, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file:	 \"%v\" %v", commandLineArgs.logFile, err)
+		}
+		defer logFile.Close()
+
+		log.SetOutput(logFile)
+		log.Println("Startup with log file")
+	}
+}
+
 func main() {
 	var cc ccTray
 
@@ -44,6 +57,12 @@ func main() {
 			Usage:       "Path to config files drop box folder or single file",
 			Destination: &commandLineArgs.configPath,
 		},
+		cli.StringFlag{
+			Name:        "log",
+			Value:       "/var/log/ccTray2Slack.log",
+			Usage:       "Path to log-file",
+			Destination: &commandLineArgs.logFile,
+		},
 	}
 	app.Commands = []cli.Command{
 		{
@@ -56,25 +75,8 @@ func main() {
 					Value:       10 * time.Second,
 					Destination: &commandLineArgs.pollTime,
 				},
-				cli.StringFlag{
-					Name:        "log",
-					Value:       "",
-					Usage:       "Path to log-file",
-					Destination: &commandLineArgs.logFile,
-				},
 			},
 			Action: func(c *cli.Context) {
-
-				if commandLineArgs.logFile != "" {
-					logFile, err := os.OpenFile(commandLineArgs.logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-					if err != nil {
-						log.Fatalf("error opening file:	 \"%v\" %v", commandLineArgs.logFile, err)
-					}
-					defer logFile.Close()
-
-					log.SetOutput(logFile)
-					log.Println("Startup with log file")
-				}
 
 				if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = CreateCcTray(config.Remotes[0])
