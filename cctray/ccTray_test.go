@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 var (
@@ -40,7 +42,14 @@ var (
 		"name=Project 3, activity=Sleeping, status=Failed, label=1.2.7, time=2009-07-27 14:17:19 +0000 UTC, url=http://localhost:8153/cruise/v3, transition=Broken"}
 )
 
-func TestListProjects(t *testing.T) {
+// Hook up gocheck into the "go test" runner.
+func Test(t *testing.T) { TestingT(t) }
+
+type MySuite struct{}
+
+var _ = Suite(&MySuite{}) // Hook up gocheck into the "go test" runner.
+
+func (s *MySuite) TestListProjects(c *C) {
 	ccXMLCopy := ccXML
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var popped string
@@ -55,10 +64,10 @@ func TestListProjects(t *testing.T) {
 	out = buf
 	sut.ListProjects()
 	expect := "\"Project 1\",\n\"Project 2\",\n\"Project 3\",\n"
-	equalString(t, buf.String(), expect)
+	c.Assert(buf.String(), Equals, expect)
 }
 
-func TestIt(t *testing.T) {
+func (s *MySuite) TestIt(c *C) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var popped string
 		w.Header().Set("Content-Type", "application/json")
@@ -74,11 +83,11 @@ func TestIt(t *testing.T) {
 		for {
 			select {
 			case p := <-sut.Ch:
-				equalString(t, fmt.Sprintf("%v", p), expect[count])
+				c.Assert(fmt.Sprintf("%v", p), Equals, expect[count])
 				count++
 			case e := <-sut.ChErr:
 				if e != nil {
-					t.Error("Unexpected errors")
+					c.Error("Unexpected errors")
 				}
 			}
 		}
@@ -86,7 +95,7 @@ func TestIt(t *testing.T) {
 
 	sut.GetLatest() // prime the system
 	sut.GetLatest() // get changes
-	equalInt(t, count, 2)
+	c.Assert(count, Equals, 2)
 	sut.GetLatest() // get changes
-	equalInt(t, count, 6)
+	c.Assert(count, Equals, 6)
 }
