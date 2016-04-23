@@ -4,13 +4,15 @@ import (
 	"testing"
 
 	"github.com/christer79/ccTray2Slack/cctray"
+	. "gopkg.in/check.v1"
 )
 
-func equalString(t *testing.T, got string, expect string) {
-	if got != expect {
-		t.Errorf("Expected '%s' got '%s'", expect, got)
-	}
-}
+// Hook up gocheck into the "go test" runner.
+func Test(t *testing.T) { TestingT(t) }
+
+type ConfigTestSuite struct{}
+
+var _ = Suite(&ConfigTestSuite{}) // Hook up gocheck into the "go test" runner.
 
 var (
 	testProjects = []cctray.Project{
@@ -21,56 +23,38 @@ var (
 		Watch{"Identifier 2", []string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
 )
 
-func equalInt(t *testing.T, got int, expect int) {
-	if got != expect {
-		t.Errorf("Expected %d got %d", expect, got)
-	}
-}
-
-func TestProcess(t *testing.T) {
+func (s *ConfigTestSuite) TestProcess(c *C) {
 	config, _ := LoadConfig("testdata/config2.d")
 	// When Processing a correct project but with wrong Transiton
 	url, msg := config.Process(testProjects[0])
 	// ... return empty url
-	equalString(t, url, "")
+	c.Assert(url, Equals, "")
 	// When processing a correct project with corret transition
 	url, msg = config.Process(testProjects[1])
 	//... return message for the correct transition
-	equalString(t, msg.Text, "Success text")
+	c.Assert(msg.Text, Equals, "Success text")
 	// ... a non empty url
-	equalString(t, url, "project1")
+	c.Assert(url, Equals, "project1")
 	// ... correct channel should be set
-	equalString(t, msg.Channel, "#api_test")
+	c.Assert(msg.Channel, Equals, "#api_test")
 	// When Processing a project which does not match a watched project
 	url, msg = config.Process(testProjects[2])
 	// ... return an empty url
-	equalString(t, url, "")
+	c.Assert(url, Equals, "")
 }
 
-func TestLoadConfig(t *testing.T) {
+func (s *ConfigTestSuite) TestLoadConfig(c *C) {
 
 	config, _ := LoadConfig("testdata/config1.d/")
-	if len(config.Watches) != 3 {
-		t.Errorf("Expected 3 watches got %q", len(config.Watches))
-	}
-	if len(config.Remotes) != 2 {
-		t.Errorf("Expected 3 watches got %q", len(config.Watches))
-	}
+	c.Assert(len(config.Watches), Equals, 3)
+	c.Assert(len(config.Remotes), Equals, 2)
 
 	//TODO: Compare structs
-	if config.Watches[0].Channel != expectedWatches[0].Channel {
-		t.Errorf("Expected %v got %v", expectedWatches[0].Channel, config.Watches[0].Channel)
-	}
-
-	//TODO: Compare structs
-	if config.Watches[1].ProjectRx[0] != expectedWatches[1].ProjectRx[0] {
-		t.Errorf("Expected %v got %v", expectedWatches[1].ProjectRx[0], config.Watches[1].ProjectRx[0])
-	}
+	c.Assert(config.Watches[0].Channel, Equals, expectedWatches[0].Channel)
+	c.Assert(config.Watches[1].ProjectRx[0], Equals, expectedWatches[1].ProjectRx[0])
 
 	configPath := "testdata/config_which_does_not_exist.json"
 	_, err := LoadConfig(configPath)
-	if err == nil {
-		t.Errorf("Expecte to fail when loading config: %q", configPath)
-	}
+	c.Assert(err, NotNil)
 
 }
