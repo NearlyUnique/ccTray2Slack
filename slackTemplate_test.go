@@ -3,15 +3,17 @@ package main
 import (
 	"testing"
 	"time"
+
+	"github.com/christer79/ccTray2Slack/cctray"
 )
 
 func Test_the_project_information_is_put_into_the_slack_msg_template(t *testing.T) {
-	p := Project{
+	p := cctray.Project{
 		"#name#",
 		"#activity#",
 		"#status#",
 		"#label#",
-		projTime{time.Date(2001, time.January, 15, 14, 16, 1, 0, time.UTC)},
+		cctray.ProjTime{time.Date(2001, time.January, 15, 14, 16, 1, 0, time.UTC)},
 		"#url#",
 		"#transition#",
 	}

@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+
+	"github.com/christer79/ccTray2Slack/cctray"
 )
 
 //Attachement defines an attchemnt included in a slack message
@@ -61,7 +63,7 @@ var (
 	}
 )
 
-func replaceString(s string, p Project) string {
+func replaceString(s string, p cctray.Project) string {
 	return rx.ReplaceAllStringFunc(s, func(src string) string {
 		switch src {
 		case "%project%":
@@ -80,7 +82,7 @@ func replaceString(s string, p Project) string {
 }
 
 // UpdateMessage replaces keywords in a slack message with the matching values from a Project.
-func (s *SlackMessage) UpdateMessage(p Project) {
+func (s *SlackMessage) UpdateMessage(p cctray.Project) {
 	s.Text = replaceString(s.Text, p)
 	for i := range s.Attachements {
 		s.Attachements[i].Text = replaceString(s.Attachements[i].Text, p)

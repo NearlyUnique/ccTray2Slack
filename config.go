@@ -8,6 +8,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/christer79/ccTray2Slack/cctray"
 )
 
 type (
@@ -166,7 +168,7 @@ func (c *Config) Add(cfg Config) {
 }
 
 // Process returns a url and template slackmessage to be used for sending messages to slack given a certain Project
-func (c Config) Process(p Project) (url string, msg SlackMessage) {
+func (c Config) Process(p cctray.Project) (url string, msg SlackMessage) {
 	log.Printf("process::%s\n", p.Name)
 
 	for _, watch := range c.Watches {

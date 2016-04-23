@@ -1,4 +1,4 @@
-package main
+package cctray
 
 import (
 	"encoding/xml"
@@ -13,7 +13,7 @@ import (
 var out io.Writer = os.Stdout
 
 type (
-	ccTray struct {
+	CcTray struct {
 		URL         string
 		Username    string
 		Password    string
@@ -24,14 +24,14 @@ type (
 	}
 )
 
-// xml for ccTray schema
+// xml for CcTray schema
 type (
 	Project struct {
 		Name            string   `xml:"name,attr"`
 		Activity        string   `xml:"activity,attr"`
 		LastBuildStatus string   `xml:"lastBuildStatus,attr"`
 		LastBuildLabel  string   `xml:"lastBuildLabel,attr"`
-		LastBuildTime   projTime `xml:"lastBuildTime,attr"`
+		LastBuildTime   ProjTime `xml:"lastBuildTime,attr"`
 		WebUrl          string   `xml:"webUrl,attr"`
 		Transition      string
 	}
@@ -52,8 +52,8 @@ func (p Project) String() string {
 		p.Transition)
 }
 
-func CreateCcTray(url string) ccTray {
-	return ccTray{
+func CreateCcTray(url string) CcTray {
+	return CcTray{
 		URL:      url,
 		Ch:       make(chan Project),
 		ChErr:    make(chan error),
@@ -61,7 +61,7 @@ func CreateCcTray(url string) ccTray {
 	}
 }
 
-func (cc ccTray) GetProjects() (Projects, error) {
+func (cc CcTray) GetProjects() (Projects, error) {
 	var err error
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", cc.URL, nil)
@@ -82,7 +82,7 @@ func (cc ccTray) GetProjects() (Projects, error) {
 	return p, err
 }
 
-func (cc ccTray) ListProjects() {
+func (cc CcTray) ListProjects() {
 	p, err := cc.GetProjects()
 	if err == nil {
 		for _, project := range p.Projects {
@@ -93,7 +93,7 @@ func (cc ccTray) ListProjects() {
 	}
 }
 
-func (cc ccTray) GetLatest() {
+func (cc CcTray) GetLatest() {
 	p, err := cc.GetProjects()
 	if err == nil {
 		cc.publishChanges(p.Projects)
@@ -103,7 +103,7 @@ func (cc ccTray) GetLatest() {
 
 }
 
-func (cc ccTray) publishChanges(projects []Project) {
+func (cc CcTray) publishChanges(projects []Project) {
 	log.Printf("publishing %d\n", len(projects))
 	for _, current := range projects {
 		if prev, ok := cc.previous[current.Name]; ok {

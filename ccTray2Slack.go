@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/christer79/ccTray2Slack/cctray"
 	"github.com/codegangsta/cli"
 )
 
@@ -33,7 +34,7 @@ func setupLog(logPath string) {
 }
 
 func main() {
-	var cc ccTray
+	var cc cctray.CcTray
 
 	app := cli.NewApp()
 	app.Name = "ccTraytoSlack"
@@ -79,7 +80,7 @@ func main() {
 			Action: func(c *cli.Context) {
 
 				if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
-					cc = CreateCcTray(config.Remotes[0])
+					cc = cctray.CreateCcTray(config.Remotes[0])
 					cc.Username = commandLineArgs.username
 					cc.Password = commandLineArgs.password
 					runPollLoop(config, cc)
@@ -97,7 +98,7 @@ func main() {
 					Usage: "Print all availabale projects on ccTray endpoint",
 					Action: func(c *cli.Context) {
 						if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
-							cc = CreateCcTray(config.Remotes[0])
+							cc = cctray.CreateCcTray(config.Remotes[0])
 							cc.Username = commandLineArgs.username
 							cc.Password = commandLineArgs.password
 							cc.ListProjects()
@@ -141,7 +142,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func runPollLoop(config Config, cc ccTray) {
+func runPollLoop(config Config, cc cctray.CcTray) {
 	ticker := time.NewTicker(commandLineArgs.pollTime)
 	go cc.GetLatest()
 

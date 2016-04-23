@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/christer79/ccTray2Slack/cctray"
+)
 
 func equalString(t *testing.T, got string, expect string) {
 	if got != expect {
@@ -9,10 +13,10 @@ func equalString(t *testing.T, got string, expect string) {
 }
 
 var (
-	testProjects = []Project{
-		Project{Name: "Project1", Transition: "Fixed"},
-		Project{Name: "Project1", Transition: "Success"},
-		Project{Name: "Notinconfig", Transition: "Failed"}}
+	testProjects = []cctray.Project{
+		cctray.Project{Name: "Project1", Transition: "Fixed"},
+		cctray.Project{Name: "Project1", Transition: "Success"},
+		cctray.Project{Name: "Notinconfig", Transition: "Failed"}}
 	expectedWatches = []Watch{Watch{"Identifier 1", []string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test"},
 		Watch{"Identifier 2", []string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
 )
