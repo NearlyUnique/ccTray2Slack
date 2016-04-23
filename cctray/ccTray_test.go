@@ -45,11 +45,11 @@ var (
 // Hook up gocheck into the "go test" runner.
 func Test(t *testing.T) { TestingT(t) }
 
-type MySuite struct{}
+type CcTrayTestSuite struct{}
 
-var _ = Suite(&MySuite{}) // Hook up gocheck into the "go test" runner.
+var _ = Suite(&CcTrayTestSuite{}) // Hook up gocheck into the "go test" runner.
 
-func (s *MySuite) TestListProjects(c *C) {
+func (s *CcTrayTestSuite) TestListProjects(c *C) {
 	ccXMLCopy := ccXML
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var popped string
@@ -67,7 +67,7 @@ func (s *MySuite) TestListProjects(c *C) {
 	c.Assert(buf.String(), Equals, expect)
 }
 
-func (s *MySuite) TestIt(c *C) {
+func (s *CcTrayTestSuite) TestIt(c *C) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var popped string
 		w.Header().Set("Content-Type", "application/json")
