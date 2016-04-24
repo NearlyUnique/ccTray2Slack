@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/christer79/ccTray2Slack/cctray"
-	"github.com/christer79/ccTray2Slack/webinterface"
 	. "gopkg.in/check.v1"
 )
 
@@ -44,7 +43,7 @@ var (
 
 	groupProjectsProjects = cctray.Projects{testProjects}
 
-	groupProjectsResult = webinterface.Statuses{
+	groupProjectsResult = map[string][]cctray.Project{
 		"IdentifierB": []cctray.Project{testProjects[2]},
 		"IdentifierA": []cctray.Project{testProjects[0], testProjects[1]},
 	}
