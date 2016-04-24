@@ -80,16 +80,21 @@ func ConfigChanged(path string) bool {
 	return true
 }
 
+func generateConfig(data []byte, cfg *Config) error {
+	err := json.Unmarshal(data, &cfg)
+	if err != nil {
+		log.Printf("Unable to parse content ''%v'\n", err)
+		log.Printf("%v", string(data))
+	}
+	return err
+}
+
 func readConfigFile(path string) (Config, error) {
 	var cfgTmp Config
 	log.Printf("Verifying \"%v\"\n", path)
 	fileData, err := ioutil.ReadFile(path)
 	if err == nil {
-		err = json.Unmarshal(fileData, &cfgTmp)
-		if err != nil {
-			log.Printf("Unable to parse content ''%v'\n", err)
-			log.Printf("%v", string(fileData))
-		}
+		err = generateConfig(fileData, &cfgTmp)
 	} else {
 		log.Printf("Unable to load file '%v'\n", err)
 	}
