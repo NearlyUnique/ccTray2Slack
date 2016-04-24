@@ -25,6 +25,7 @@ type (
 )
 
 type (
+	//Project xml for CcTray schema
 	Project struct {
 		Name            string   `xml:"name,attr"`
 		Activity        string   `xml:"activity,attr"`
@@ -34,6 +35,8 @@ type (
 		WebURL          string   `xml:"webUrl,attr"`
 		Transition      string
 	}
+
+	//Projects array of Project
 	Projects struct {
 		Projects []Project `xml:"Project"`
 	}
@@ -47,10 +50,11 @@ func (p Project) String() string {
 		p.LastBuildStatus,
 		p.LastBuildLabel,
 		p.LastBuildTime,
-		p.WebUrl,
+		p.WebURL,
 		p.Transition)
 }
 
+//CreateCcTray creates a CcTray struct
 func CreateCcTray(url string) CcTray {
 	return CcTray{
 		URL:      url,
@@ -81,6 +85,7 @@ func (cc CcTray) GetProjects() (Projects, error) {
 	return p, err
 }
 
+//ListProjects - outputs a list of all available projects to stdout formatted to be used in watch configuration
 func (cc CcTray) ListProjects() {
 	p, err := cc.GetProjects()
 	if err == nil {
