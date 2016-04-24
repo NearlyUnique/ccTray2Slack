@@ -73,7 +73,7 @@ func replaceString(s string, p cctray.Project) string {
 		case "%label%":
 			return p.LastBuildLabel
 		case "%url%":
-			return p.WebUrl
+			return p.WebURL
 		case "%time%":
 			return p.LastBuildTime.Format("2006-01-02 15:04:05")
 		}

@@ -24,7 +24,6 @@ type (
 	}
 )
 
-// xml for CcTray schema
 type (
 	Project struct {
 		Name            string   `xml:"name,attr"`
@@ -32,7 +31,7 @@ type (
 		LastBuildStatus string   `xml:"lastBuildStatus,attr"`
 		LastBuildLabel  string   `xml:"lastBuildLabel,attr"`
 		LastBuildTime   ProjTime `xml:"lastBuildTime,attr"`
-		WebUrl          string   `xml:"webUrl,attr"`
+		WebURL          string   `xml:"webUrl,attr"`
 		Transition      string
 	}
 	Projects struct {
