@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/christer79/ccTray2Slack/cctray"
+	"github.com/christer79/ccTray2Slack/webinterface"
 	. "gopkg.in/check.v1"
 )
 
@@ -15,12 +16,38 @@ type ConfigTestSuite struct{}
 var _ = Suite(&ConfigTestSuite{}) // Hook up gocheck into the "go test" runner.
 
 var (
+	groupProjectsConfig = `
+	{
+	"watches" : [
+		{
+			"tags": ["Project1", "Project2"],
+			"transitions": ["Success","Failed"],
+			"slackUrl": "project1",
+			"channel": "#api_test",
+			"identifier": "IdentifierA"
+		},{
+			"tags": ["Notinconfig"],
+			"transitions": ["Success","Failed"],
+			"slackUrl": "project1",
+			"channel": "#api_test",
+			"identifier": "IdentifierB"
+		}
+
+	]
+}`
 	testProjects = []cctray.Project{
 		cctray.Project{Name: "Project1", Transition: "Fixed"},
-		cctray.Project{Name: "Project1", Transition: "Success"},
+		cctray.Project{Name: "Project2", Transition: "Success"},
 		cctray.Project{Name: "Notinconfig", Transition: "Failed"}}
 	expectedWatches = []Watch{Watch{"Identifier 1", []string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test"},
 		Watch{"Identifier 2", []string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
+
+	groupProjectsProjects = cctray.Projects{testProjects}
+
+	groupProjectsResult = webinterface.Statuses{
+		"IdentifierB": []cctray.Project{testProjects[2]},
+		"IdentifierA": []cctray.Project{testProjects[0], testProjects[1]},
+	}
 )
 
 func (s *ConfigTestSuite) TestProcess(c *C) {
@@ -34,7 +61,7 @@ func (s *ConfigTestSuite) TestProcess(c *C) {
 	//... return message for the correct transition
 	c.Assert(msg.Text, Equals, "Success text")
 	// ... a non empty url
-	c.Assert(url, Equals, "project1")
+	c.Assert(url, Equals, "project2_3")
 	// ... correct channel should be set
 	c.Assert(msg.Channel, Equals, "#api_test")
 	// When Processing a project which does not match a watched project
@@ -57,4 +84,13 @@ func (s *ConfigTestSuite) TestLoadConfig(c *C) {
 	_, err := LoadConfig(configPath)
 	c.Assert(err, NotNil)
 
+}
+
+func (s *ConfigTestSuite) TestGroupProjects(c *C) {
+	config := Config{}
+	generateConfig([]byte(groupProjectsConfig), &config)
+	statuses := config.GroupProjects(groupProjectsProjects)
+	c.Assert(statuses["IdentifierB"][0], Equals, groupProjectsResult["IdentifierB"][0])
+	c.Assert(statuses["IdentifierA"][0], Equals, groupProjectsResult["IdentifierA"][0])
+	c.Assert(statuses["IdentifierA"][1], Equals, groupProjectsResult["IdentifierA"][1])
 }

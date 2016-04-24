@@ -172,10 +172,27 @@ func (c *Config) Add(cfg Config) {
 
 }
 
+//GroupProjects takes a struct Projects and groups echa project under the watchers watching it
+func (c Config) GroupProjects(projects cctray.Projects) map[string][]cctray.Project {
+	statuses := make(map[string][]cctray.Project)
+	for _, watch := range c.Watches {
+		if watch.Identifier == "" {
+			continue
+		}
+		for _, projectRx := range watch.ProjectRx {
+			for _, p := range projects.Projects {
+				if match, _ := regexp.MatchString(projectRx, p.Name); match {
+					statuses[watch.Identifier] = append(statuses[watch.Identifier], p)
+				}
+			}
+		}
+	}
+	return statuses
+}
+
 // Process returns a url and template slackmessage to be used for sending messages to slack given a certain Project
 func (c Config) Process(p cctray.Project) (url string, msg SlackMessage) {
 	log.Printf("process::%s\n", p.Name)
-
 	for _, watch := range c.Watches {
 		for _, projectRx := range watch.ProjectRx {
 			if match, _ := regexp.MatchString(projectRx, p.Name); match {
