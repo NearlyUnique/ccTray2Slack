@@ -19,6 +19,7 @@ type (
 		Password    string
 		Ch          chan Project
 		ChErr       chan error
+		ChProjects  chan Projects
 		interesting []string
 		previous    map[string]Project
 	}
@@ -57,10 +58,11 @@ func (p Project) String() string {
 //CreateCcTray creates a CcTray struct
 func CreateCcTray(url string) CcTray {
 	return CcTray{
-		URL:      url,
-		Ch:       make(chan Project),
-		ChErr:    make(chan error),
-		previous: make(map[string]Project),
+		URL:        url,
+		Ch:         make(chan Project),
+		ChErr:      make(chan error),
+		ChProjects: make(chan Projects),
+		previous:   make(map[string]Project),
 	}
 }
 
@@ -82,6 +84,11 @@ func (cc CcTray) GetProjects() (Projects, error) {
 	} else {
 		log.Fatalf("CC Tray http GET failed %v\n", err)
 	}
+	select {
+	case cc.ChProjects <- p:
+	default:
+	}
+
 	return p, err
 }
 
