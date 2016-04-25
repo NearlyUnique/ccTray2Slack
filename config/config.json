@@ -2,16 +2,18 @@
 	"remotes" : ["http://localhost:8153/go/cctray.xml"],
 	"watches" : [
 		{
-			"tags": ["^Project1.*"],
+			"tags": ["^alaska.*"],
 			"slackUrl": "https://hooks.slack.com/services/",
 			"transitions": ["Success","Failed"],
-			"channel": "#api_test"
+			"channel": "#api_test",
+			"identifier":  "Alaska"
 		}
 		,{
-			"tags": ["Project3 :: Stage1 :: Job1","^Project4.*"],
+			"tags": ["CustomerRepoTest","crewplace-buildenv"],
 			"slackUrl": "https://hooks.slack.com/services/",
 			"transitions": ["Broken","Fixed"],
-			"channel": "#api_test"
+			"channel": "#api_test",
+			"identifier":  "TEST"
 		}
 	],
 	"slackmessages" : {

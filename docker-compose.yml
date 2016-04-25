@@ -6,5 +6,5 @@ cctray_to_slack:
   environment:
     - USERNAME=user
     - PASSWORD=password
-    - VERSION=v0.1.16
+    - PORT=8888
     - LOGFILE=/root/log/ccTray2Slack.log
