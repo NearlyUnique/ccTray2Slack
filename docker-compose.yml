@@ -1,7 +1,7 @@
 cctray_to_slack:
   build: .
   volumes:
-    - ./config:/root/config
+    - ./config.d:/root/config
     - ./log:/root/log
   environment:
     - USERNAME=user
