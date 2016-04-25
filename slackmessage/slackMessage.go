@@ -1,4 +1,4 @@
-package main
+package slackmessage
 
 import (
 	"bytes"
@@ -31,7 +31,7 @@ type (
 
 var (
 	rx                   = regexp.MustCompile("%.*?%")
-	defaultSlackMessages = map[string]SlackMessage{
+	DefaultSlackMessages = map[string]SlackMessage{
 		"Success": SlackMessage{
 			"New update from your build-server",
 			[]Attachement{Attachement{"<%url%|%Project%-%label%>", "#e23e3e", "was %status% at %time%"}},

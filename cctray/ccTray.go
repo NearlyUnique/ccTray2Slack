@@ -61,7 +61,7 @@ func CreateCcTray(url string) CcTray {
 		URL:        url,
 		Ch:         make(chan Project),
 		ChErr:      make(chan error),
-		ChProjects: make(chan Projects),
+		ChProjects: make(chan Projects, 1),
 		previous:   make(map[string]Project),
 	}
 }

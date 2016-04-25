@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/christer79/ccTray2Slack/cctray"
+	"github.com/christer79/ccTray2Slack/config"
 	"github.com/christer79/ccTray2Slack/webinterface"
 	"github.com/codegangsta/cli"
 )
@@ -86,7 +87,7 @@ func main() {
 			},
 			Action: func(c *cli.Context) {
 
-				if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
+				if config, err := config.LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = cctray.CreateCcTray(config.Remotes[0])
 					cc.Username = commandLineArgs.username
 					cc.Password = commandLineArgs.password
@@ -108,7 +109,7 @@ func main() {
 					Name:  "projects",
 					Usage: "Print all availabale projects on ccTray endpoint",
 					Action: func(c *cli.Context) {
-						if config, err := LoadConfig(commandLineArgs.configPath); err == nil {
+						if config, err := config.LoadConfig(commandLineArgs.configPath); err == nil {
 							cc = cctray.CreateCcTray(config.Remotes[0])
 							cc.Username = commandLineArgs.username
 							cc.Password = commandLineArgs.password
@@ -122,7 +123,7 @@ func main() {
 					Name:  "verify",
 					Usage: "Verify all configuration files in the config folder",
 					Action: func(c *cli.Context) {
-						if _, err := LoadConfig(commandLineArgs.configPath); err != nil {
+						if _, err := config.LoadConfig(commandLineArgs.configPath); err != nil {
 							log.Fatal("Configuration verification failed")
 						}
 					},
@@ -143,8 +144,8 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) {
-						args := DefaultConfigArgs{RemoteURL: c.String("remote"), SlackHook: c.String("slack")}
-						PrintDefaultConfig(args)
+						args := config.DefaultConfigArgs{RemoteURL: c.String("remote"), SlackHook: c.String("slack")}
+						config.PrintDefaultConfig(args)
 					},
 				},
 			},
@@ -153,14 +154,14 @@ func main() {
 	app.Run(os.Args)
 }
 
-func runPollLoop(config Config, cc cctray.CcTray) {
+func runPollLoop(conf config.Config, cc cctray.CcTray) {
 	ticker := time.NewTicker(commandLineArgs.pollTime)
 	go cc.GetLatest()
 
 	for {
 		select {
 		case p := <-cc.Ch:
-			if url, msg := config.Process(p); url != "" {
+			if url, msg := conf.Process(p); url != "" {
 				log.Printf("posting for %q\n", p.Name)
 				msg.UpdateMessage(p)
 				msg.PostSlackMessage(url)
@@ -173,7 +174,7 @@ func runPollLoop(config Config, cc cctray.CcTray) {
 			}
 			log.Println("Cycle complete")
 		case s := <-cc.ChProjects:
-			stat := config.GroupProjects(s)
+			stat := conf.GroupProjects(s)
 			if len(stat) != 0 {
 				select {
 				case web.ChStatus <- stat:
@@ -181,9 +182,9 @@ func runPollLoop(config Config, cc cctray.CcTray) {
 				}
 			}
 		case <-ticker.C:
-			if ConfigChanged(commandLineArgs.configPath) {
-				if temp, err := LoadConfig(commandLineArgs.configPath); err == nil {
-					config = temp
+			if config.ConfigChanged(commandLineArgs.configPath) {
+				if temp, err := config.LoadConfig(commandLineArgs.configPath); err == nil {
+					conf = temp
 				} else {
 					log.Printf("Unable to read config file %s.", commandLineArgs.configPath)
 				}

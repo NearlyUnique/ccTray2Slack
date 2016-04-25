@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/christer79/ccTray2Slack/cctray"
+	"github.com/christer79/ccTray2Slack/slackmessage"
 )
 
 type (
@@ -19,9 +20,9 @@ type (
 	// Watches: see struct watches
 	// SlackMessages: see struct SlackMessage
 	Config struct {
-		Remotes       []string                `json:"remotes"`
-		Watches       []Watch                 `json:"watches"`
-		SlackMessages map[string]SlackMessage `json:"slackmessages"`
+		Remotes       []string                             `json:"remotes"`
+		Watches       []Watch                              `json:"watches"`
+		SlackMessages map[string]slackmessage.SlackMessage `json:"slackmessages"`
 	}
 
 	// Watch is the mapping between ccTray Project name and slack.
@@ -69,8 +70,8 @@ func PrintDefaultConfig(args DefaultConfigArgs) {
 	}
 	c.Remotes = defaultRemotes
 	c.Remotes[0] = args.RemoteURL
-	c.SlackMessages = make(map[string]SlackMessage)
-	c.SlackMessages = defaultSlackMessages
+	c.SlackMessages = make(map[string]slackmessage.SlackMessage)
+	c.SlackMessages = slackmessage.DefaultSlackMessages
 	b, _ := json.MarshalIndent(c, " ", " ")
 	fmt.Printf("%v", string(b))
 }
@@ -133,7 +134,7 @@ func getConfigFiles(path string) ([]string, error) {
 // LoadConfig reads the config from path given as argument
 func LoadConfig(path string) (Config, error) {
 	cfg := Config{}
-	cfg.SlackMessages = make(map[string]SlackMessage)
+	cfg.SlackMessages = make(map[string]slackmessage.SlackMessage)
 
 	files, err := getConfigFiles(path)
 	for _, file := range files {
@@ -191,7 +192,7 @@ func (c Config) GroupProjects(projects cctray.Projects) map[string][]cctray.Proj
 }
 
 // Process returns a url and template slackmessage to be used for sending messages to slack given a certain Project
-func (c Config) Process(p cctray.Project) (url string, msg SlackMessage) {
+func (c Config) Process(p cctray.Project) (url string, msg slackmessage.SlackMessage) {
 	log.Printf("process::%s\n", p.Name)
 	for _, watch := range c.Watches {
 		for _, projectRx := range watch.ProjectRx {
@@ -204,9 +205,9 @@ func (c Config) Process(p cctray.Project) (url string, msg SlackMessage) {
 					message.Channel = watch.Channel
 					return watch.SlackURL, message
 				}
-				return "", SlackMessage{}
+				return "", slackmessage.SlackMessage{}
 			}
 		}
 	}
-	return "", SlackMessage{}
+	return "", slackmessage.SlackMessage{}
 }
