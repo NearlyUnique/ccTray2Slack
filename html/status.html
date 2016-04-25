@@ -1,0 +1,28 @@
+<html>
+<style>
+p.Success {
+  color: green;
+}
+p.Failure {
+  color: red;
+}
+
+</style>
+<body>
+  <h1>Grouped build status</h1>
+  <ul>
+  {{ range $name, $projects := .Projects }}
+     <li>
+     <h2>{{ $name }}</h2>
+     <ul>
+     {{ range  $projects }}
+         {{ if eq $.StatusFilter .LastBuildStatus "" }}
+            <li><p class="{{ .LastBuildStatus  }}">{{ .Name }} <a href="{{ .WebURL }}">#{{ .LastBuildLabel }} - ({{ .LastBuildStatus }})</a></p></li>
+         {{ end }}
+      {{ end }}
+    </ul>
+   </li>
+  {{ end }}
+</ul>
+</body>
+</html>
