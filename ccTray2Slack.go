@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/christer79/ccTray2Slack/cctray"
+	"github.com/christer79/ccTray2Slack/webinterface"
 	"github.com/codegangsta/cli"
 )
 
@@ -19,6 +20,7 @@ type CommandLineArgs struct {
 }
 
 var commandLineArgs CommandLineArgs
+var web webinterface.WebInterface
 
 func setupLog(logPath string) {
 	if logPath != "" {
@@ -76,6 +78,11 @@ func main() {
 					Value:       10 * time.Second,
 					Destination: &commandLineArgs.pollTime,
 				},
+				cli.StringFlag{
+					Name:  "port",
+					Usage: "Set the port to start web interface on",
+					Value: "",
+				},
 			},
 			Action: func(c *cli.Context) {
 
@@ -83,6 +90,10 @@ func main() {
 					cc = cctray.CreateCcTray(config.Remotes[0])
 					cc.Username = commandLineArgs.username
 					cc.Password = commandLineArgs.password
+					if c.String("port") != "" {
+						web = webinterface.WebInterface{}
+						go web.Start(c.String("port"))
+					}
 					runPollLoop(config, cc)
 				} else {
 					log.Fatalf("Unable to load config %v, %v ", commandLineArgs.configPath, err)
@@ -161,6 +172,14 @@ func runPollLoop(config Config, cc cctray.CcTray) {
 				log.Fatalf("Failed to get ccTray Data \n%v\n", e)
 			}
 			log.Println("Cycle complete")
+		case s := <-cc.ChProjects:
+			stat := config.GroupProjects(s)
+			if len(stat) != 0 {
+				select {
+				case web.ChStatus <- stat:
+				default:
+				}
+			}
 		case <-ticker.C:
 			if ConfigChanged(commandLineArgs.configPath) {
 				if temp, err := LoadConfig(commandLineArgs.configPath); err == nil {
