@@ -19,6 +19,9 @@ p.Failure {
          {{ if eq $.StatusFilter .LastBuildStatus "" }}
             <li><p class="{{ .LastBuildStatus  }}">{{ .Name }}
                 <a target="_blank" href="{{ .WebURL }}">#{{ .LastBuildLabel }} - ({{ .LastBuildStatus }})</a>
+                {{ if eq .LastBuildStatus "Failure" }}
+                    <a target="_blank" href="http://localhost:8080/claim/{{ .Name }}/claim?comment=&user=Anonymous">CLAIM</a>
+                {{ end }}
                 </p>
             </li>
          {{ end }}
