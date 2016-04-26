@@ -9,6 +9,7 @@ import (
 	"github.com/christer79/ccTray2Slack/config"
 	"github.com/christer79/ccTray2Slack/webinterface"
 	"github.com/codegangsta/cli"
+	consul "github.com/hashicorp/consul/api"
 )
 
 //CommandLineArgs stores the arguments given on commadn line for later use
@@ -84,8 +85,48 @@ func main() {
 					Usage: "Set the port to start web interface on",
 					Value: "",
 				},
+				cli.StringFlag{
+					Name:  "consul-url",
+					Usage: "Set the consul-server hostname",
+					Value: "localhost:8500",
+				},
+				cli.StringFlag{
+					Name:  "consul-address",
+					Usage: "Set the consul-server hostname",
+					Value: "",
+				},
+				cli.StringFlag{
+					Name:  "consul-datacenter",
+					Usage: "Set the consul datacenter",
+					Value: "cloud",
+				},
+				cli.StringFlag{
+					Name:  "consul-service",
+					Usage: "Set the consul service-name",
+					Value: "cctray",
+				},
 			},
 			Action: func(c *cli.Context) {
+				if c.String("consul-address") != "" {
+					config := consul.DefaultConfig()
+					config.Address = c.String("consul-url")
+					config.Datacenter = c.String("consul-datacenter")
+					log.Println(config)
+					consulClient, err := consul.NewClient(config)
+					if err != nil {
+						log.Fatalf("Error NewClient consul: %v", err)
+					}
+					serv := consul.AgentService{Service: c.String("consul-service")}
+					reg := consul.CatalogRegistration{Address: c.String("consul-address"), Datacenter: c.String("consul-datacenter"), Service: &serv}
+					if reg.Node, err = os.Hostname(); err != nil {
+						log.Fatalf("Error getting hostname: %v", err)
+					}
+					if _, err = consulClient.Catalog().Register(&reg, nil); err != nil {
+						log.Fatalf("Error registring to consul: %v", err)
+					}
+					log.Printf("Service: %v", serv)
+					log.Printf("Registration: %v", reg)
+				}
 
 				if config, err := config.LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = cctray.CreateCcTray(config.Remotes[0])
