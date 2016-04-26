@@ -139,13 +139,12 @@ func LoadConfig(path string) (Config, error) {
 	files, err := getConfigFiles(path)
 	for _, file := range files {
 		if cfgTmp, err := readConfigFile(file); err == nil {
-			cfg.Add(cfgTmp)
+			cfg.append(cfgTmp)
 		} else {
 			cfg = Config{}
 			return cfg, err
 		}
 	}
-
 	return cfg, err
 }
 
@@ -158,8 +157,7 @@ func inSlice(check string, slice []string) bool {
 	return false
 }
 
-//Add adds configuration from one Config-stuct to another struct
-func (c *Config) Add(cfg Config) {
+func (c *Config) append(cfg Config) {
 	for _, remote := range cfg.Remotes {
 		c.Remotes = append(c.Remotes, remote)
 	}
