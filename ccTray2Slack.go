@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/christer79/ccTray2Slack/cctray"
+	"github.com/christer79/ccTray2Slack/claim"
 	"github.com/christer79/ccTray2Slack/config"
 	"github.com/christer79/ccTray2Slack/webinterface"
 	"github.com/codegangsta/cli"
@@ -23,6 +24,7 @@ type CommandLineArgs struct {
 
 var commandLineArgs CommandLineArgs
 var web webinterface.WebInterface
+var claimObject claim.Claim
 
 func setupLog(logPath string) {
 	if logPath != "" {
@@ -132,14 +134,19 @@ func main() {
 			Action: func(c *cli.Context) {
 				registerService(c)
 
+				claimObject = claim.CreateClaim(c.String("consul-url"), c.String("consul-datacenter"))
+				go claimObject.Start()
+
 				if config, err := config.LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = cctray.CreateCcTray(config.Remotes[0])
 					cc.Username = commandLineArgs.username
 					cc.Password = commandLineArgs.password
 					if c.String("port") != "" {
 						web = webinterface.WebInterface{}
+						web.ChClaim = claimObject.ChClaim
 						go web.Start(c.String("port"))
 					}
+
 					runPollLoop(config, cc)
 				} else {
 					log.Fatalf("Unable to load config %v, %v ", commandLineArgs.configPath, err)
