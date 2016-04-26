@@ -13,11 +13,14 @@ p.Failure {
   <ul>
   {{ range $name, $projects := .Projects }}
      <li>
-     <h2>{{ $name }}</h2>
+     <h2><a name="{{ $name }}">{{ $name }}</h2>
      <ul>
      {{ range  $projects }}
          {{ if eq $.StatusFilter .LastBuildStatus "" }}
-            <li><p class="{{ .LastBuildStatus  }}">{{ .Name }} <a href="{{ .WebURL }}">#{{ .LastBuildLabel }} - ({{ .LastBuildStatus }})</a></p></li>
+            <li><p class="{{ .LastBuildStatus  }}">{{ .Name }}
+                <a target="_blank" href="{{ .WebURL }}">#{{ .LastBuildLabel }} - ({{ .LastBuildStatus }})</a>
+                </p>
+            </li>
          {{ end }}
       {{ end }}
     </ul>
