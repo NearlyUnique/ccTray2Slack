@@ -217,6 +217,7 @@ func runPollLoop(conf config.Config, cc cctray.CcTray) {
 				log.Printf("posting for %q\n", p.Name)
 				msg.UpdateMessage(p)
 				msg.PostSlackMessage(url)
+				claimObject.ChClaim <- claim.Action{p.Name, false, "", ""}
 			} else {
 				log.Printf("skipped %q\n", p.Name)
 			}
