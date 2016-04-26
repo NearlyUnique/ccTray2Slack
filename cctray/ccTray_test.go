@@ -75,7 +75,7 @@ func (s *CcTrayTestSuite) TestIt(c *C) {
 		fmt.Fprintln(w, popped)
 	}))
 	count := 0
-	projects_count := 0
+	projectCount := 0
 	defer ts.Close()
 
 	sut := CreateCcTray(ts.URL)
@@ -87,7 +87,7 @@ func (s *CcTrayTestSuite) TestIt(c *C) {
 				c.Assert(fmt.Sprintf("%v", p), Equals, expect[count])
 				count++
 			case <-sut.ChProjects:
-				projects_count++
+				projectCount++
 			case e := <-sut.ChErr:
 				if e != nil {
 					c.Error("Unexpected errors")
@@ -97,12 +97,12 @@ func (s *CcTrayTestSuite) TestIt(c *C) {
 	}()
 
 	sut.GetLatest() // prime the system
-	c.Assert(projects_count, Equals, 1)
+	c.Assert(projectCount, Equals, 1)
 	sut.GetLatest() // get changes
 	c.Assert(count, Equals, 2)
-	c.Assert(projects_count, Equals, 2)
+	c.Assert(projectCount, Equals, 2)
 	sut.GetLatest() // get changes
 	c.Assert(count, Equals, 6)
-	c.Assert(projects_count, Equals, 3)
+	c.Assert(projectCount, Equals, 3)
 
 }
