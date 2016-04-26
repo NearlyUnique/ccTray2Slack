@@ -37,6 +37,29 @@ func setupLog(logPath string) {
 	}
 }
 
+func registerService(c *cli.Context) {
+	if c.String("consul-address") != "" {
+		config := consul.DefaultConfig()
+		config.Address = c.String("consul-url")
+		config.Datacenter = c.String("consul-datacenter")
+		log.Println(config)
+		consulClient, err := consul.NewClient(config)
+		if err != nil {
+			log.Fatalf("Error NewClient consul: %v", err)
+		}
+		serv := consul.AgentService{Service: c.String("consul-service")}
+		reg := consul.CatalogRegistration{Address: c.String("consul-address"), Datacenter: c.String("consul-datacenter"), Service: &serv}
+		if reg.Node, err = os.Hostname(); err != nil {
+			log.Fatalf("Error getting hostname: %v", err)
+		}
+		if _, err = consulClient.Catalog().Register(&reg, nil); err != nil {
+			log.Fatalf("Error registring to consul: %v", err)
+		}
+		log.Printf("Service: %v", serv)
+		log.Printf("Registration: %v", reg)
+	}
+}
+
 func main() {
 	var cc cctray.CcTray
 
@@ -107,26 +130,7 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) {
-				if c.String("consul-address") != "" {
-					config := consul.DefaultConfig()
-					config.Address = c.String("consul-url")
-					config.Datacenter = c.String("consul-datacenter")
-					log.Println(config)
-					consulClient, err := consul.NewClient(config)
-					if err != nil {
-						log.Fatalf("Error NewClient consul: %v", err)
-					}
-					serv := consul.AgentService{Service: c.String("consul-service")}
-					reg := consul.CatalogRegistration{Address: c.String("consul-address"), Datacenter: c.String("consul-datacenter"), Service: &serv}
-					if reg.Node, err = os.Hostname(); err != nil {
-						log.Fatalf("Error getting hostname: %v", err)
-					}
-					if _, err = consulClient.Catalog().Register(&reg, nil); err != nil {
-						log.Fatalf("Error registring to consul: %v", err)
-					}
-					log.Printf("Service: %v", serv)
-					log.Printf("Registration: %v", reg)
-				}
+				registerService(c)
 
 				if config, err := config.LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = cctray.CreateCcTray(config.Remotes[0])
