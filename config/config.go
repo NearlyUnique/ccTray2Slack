@@ -29,11 +29,12 @@ type (
 	// SlckUrl is the web hook to slack to use adn channel the chanel to post messages to.
 	// Transitions define whcih transitions to report
 	Watch struct {
-		Identifier  string   `json:"identifier"`
-		ProjectRx   []string `json:"tags"`
-		SlackURL    string   `json:"slackUrl"`
-		Transitions []string `json:"transitions"`
-		Channel     string   `json:"channel"`
+		Identifier   string   `json:"identifier"`
+		ProjectRx    []string `json:"tags"`
+		SlackURL     string   `json:"slackUrl"`
+		Transitions  []string `json:"transitions"`
+		Channel      string   `json:"channel"`
+		IssueProject string   `json:"issueProject"`
 	}
 
 	//DefaultConfigArgs holds arguments to  be passed to PrintDefaultConfig
@@ -50,12 +51,14 @@ var (
 			[]string{"Project1", "Project2"},
 			"https://hooks.slack.com/services/",
 			[]string{"Fixed", "Broken"},
+			"",
 			"#api_test",
 		},
 		Watch{"Identifier2",
 			[]string{"Project3", "Project4"},
 			"https://hooks.slack.com/services/",
 			[]string{"Success", "Failure"},
+			"",
 			"#api_test",
 		},
 	}
@@ -190,7 +193,7 @@ func (c Config) GroupProjects(projects cctray.Projects) map[string][]cctray.Proj
 }
 
 // Process returns a url and template slackmessage to be used for sending messages to slack given a certain Project
-func (c Config) Process(p cctray.Project) (url string, msg slackmessage.SlackMessage) {
+func (c Config) Process(p cctray.Project) (url string, msg slackmessage.SlackMessage, project string) {
 	log.Printf("process::%s\n", p.Name)
 	for _, watch := range c.Watches {
 		for _, projectRx := range watch.ProjectRx {
@@ -201,11 +204,12 @@ func (c Config) Process(p cctray.Project) (url string, msg slackmessage.SlackMes
 				if inSlice(p.Transition, watch.Transitions) {
 					message := c.SlackMessages[p.Transition]
 					message.Channel = watch.Channel
-					return watch.SlackURL, message
+					project = watch.IssueProject
+					return watch.SlackURL, message, project
 				}
-				return "", slackmessage.SlackMessage{}
+				return "", slackmessage.SlackMessage{}, ""
 			}
 		}
 	}
-	return "", slackmessage.SlackMessage{}
+	return "", slackmessage.SlackMessage{}, ""
 }

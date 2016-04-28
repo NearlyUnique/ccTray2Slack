@@ -8,7 +8,9 @@ import (
 	"github.com/christer79/ccTray2Slack/cctray"
 	"github.com/christer79/ccTray2Slack/claim"
 	"github.com/christer79/ccTray2Slack/config"
+	"github.com/christer79/ccTray2Slack/jira"
 	"github.com/christer79/ccTray2Slack/webinterface"
+
 	"github.com/codegangsta/cli"
 	consul "github.com/hashicorp/consul/api"
 )
@@ -25,6 +27,7 @@ type CommandLineArgs struct {
 var commandLineArgs CommandLineArgs
 var web webinterface.WebInterface
 var claimObject claim.Claim
+var jiraConnection jira.Client
 
 func setupLog(logPath string) {
 	if logPath != "" {
@@ -130,13 +133,25 @@ func main() {
 					Usage: "Set the consul service-name",
 					Value: "cctray",
 				},
+				cli.StringFlag{
+					Name:  "jira-url",
+					Usage: "Url to jira system",
+					Value: "",
+				}, cli.StringFlag{
+					Name:  "jira-username",
+					Usage: "Url to jira system",
+					Value: "",
+				}, cli.StringFlag{
+					Name:  "jira-password",
+					Usage: "Url to jira system",
+					Value: "",
+				},
 			},
 			Action: func(c *cli.Context) {
 				registerService(c)
 
 				claimObject = claim.CreateClaim(c.String("consul-url"), c.String("consul-datacenter"))
 				go claimObject.Start()
-
 				if config, err := config.LoadConfig(commandLineArgs.configPath); err == nil {
 					cc = cctray.CreateCcTray(config.Remotes[0])
 					cc.Username = commandLineArgs.username
@@ -145,6 +160,10 @@ func main() {
 						web = webinterface.WebInterface{}
 						web.ChClaim = claimObject.ChClaim
 						go web.Start(c.String("port"))
+					}
+
+					if c.String("jira-url") != "" {
+						jiraConnection = jira.NewClient(c.String("jira-url"), c.String("jira-username"), c.String("jira-password"))
 					}
 
 					runPollLoop(config, cc)
@@ -213,15 +232,18 @@ func runPollLoop(conf config.Config, cc cctray.CcTray) {
 	for {
 		select {
 		case p := <-cc.Ch:
-			if url, msg := conf.Process(p); url != "" {
+			url, msg, jiraProject := conf.Process(p)
+			if url != "" {
 				log.Printf("posting for %q\n", p.Name)
 				msg.UpdateMessage(p)
 				msg.PostSlackMessage(url)
 				if p.LastBuildStatus == "Success" {
 					claimObject.ChClaim <- claim.Action{p.Name, false, "", ""}
 				}
-			} else {
-				log.Printf("skipped %q\n", p.Name)
+			}
+			if jiraProject != "" {
+				log.Println("Posting to jira")
+				jiraConnection.Create(p, jiraProject)
 			}
 		case e := <-cc.ChErr:
 			if e != nil {
