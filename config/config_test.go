@@ -38,8 +38,8 @@ var (
 		cctray.Project{Name: "Project1", Transition: "Fixed"},
 		cctray.Project{Name: "Project2", Transition: "Success"},
 		cctray.Project{Name: "Notinconfig", Transition: "Failed"}}
-	expectedWatches = []Watch{Watch{"Identifier 1", []string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test"},
-		Watch{"Identifier 2", []string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test"}}
+	expectedWatches = []Watch{Watch{"Identifier 1", []string{"^Openstack.*"}, "_", []string{"Success", "Failed"}, "#api_test", ""},
+		Watch{"Identifier 2", []string{"^Provision.*"}, "_", []string{"Success", "Failed"}, "#api_test", ""}}
 
 	groupProjectsProjects = cctray.Projects{testProjects}
 
@@ -52,11 +52,11 @@ var (
 func (s *ConfigTestSuite) TestProcess(c *C) {
 	config, _ := LoadConfig("testdata/config2.d")
 	// When Processing a correct project but with wrong Transiton
-	url, msg := config.Process(testProjects[0])
+	url, msg, _ := config.Process(testProjects[0])
 	// ... return empty url
 	c.Assert(url, Equals, "")
 	// When processing a correct project with corret transition
-	url, msg = config.Process(testProjects[1])
+	url, msg, _ = config.Process(testProjects[1])
 	//... return message for the correct transition
 	c.Assert(msg.Text, Equals, "Success text")
 	// ... a non empty url
@@ -64,7 +64,7 @@ func (s *ConfigTestSuite) TestProcess(c *C) {
 	// ... correct channel should be set
 	c.Assert(msg.Channel, Equals, "#api_test")
 	// When Processing a project which does not match a watched project
-	url, msg = config.Process(testProjects[2])
+	url, msg, _ = config.Process(testProjects[2])
 	// ... return an empty url
 	c.Assert(url, Equals, "")
 }
