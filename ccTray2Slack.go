@@ -247,7 +247,7 @@ func runPollLoop(conf config.Config, cc cctray.CcTray) {
 			}
 		case e := <-cc.ChErr:
 			if e != nil {
-				log.Fatalf("Failed to get ccTray Data \n%v\n", e)
+				log.Printf("Failed to get ccTray Data \n%v\n", e)
 			}
 			log.Println("Cycle complete")
 		case s := <-cc.ChProjects:

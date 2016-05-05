@@ -82,7 +82,8 @@ func (cc CcTray) GetProjects() (Projects, error) {
 			xml.Unmarshal(body, &p)
 		}
 	} else {
-		log.Fatalf("CC Tray http GET failed %v\n", err)
+		log.Printf("CC Tray http GET failed %v\n", err)
+		return p, err
 	}
 	select {
 	case cc.ChProjects <- p:
