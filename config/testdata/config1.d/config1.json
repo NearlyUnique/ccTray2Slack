@@ -1,0 +1,74 @@
+{
+	"remotes" : ["localhost", "otherhost"],
+	"slackmessages" : {
+	  "Success": {
+	  	"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  	"attachments": [
+	  		{
+	  			"text":"This is attachments text",
+					"color":"#00ff00"
+	  		}
+	  	],
+	  	"username": "Provision",
+	  	"icon_emoji": ":ghost:",
+	  	"channel": "#api_test"
+	  },
+	  "Failed": {
+	  	"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  	"attachments": [
+	  		{
+	  			"text":"This is attachments text",
+					"color":"#ff0000"
+	  		}
+	  	],
+	  	"username": "Provision",
+	  	"icon_emoji": ":ghost:",
+	  	"channel": "#api_test"
+	  },
+	  "Fixed": {
+	  	"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  	"attachments": [
+	  		{
+	  			"text":"This is attachments text",
+					"color":"#00ff00"
+	  		}
+	  	],
+	  	"username": "Provision",
+	  	"icon_emoji": ":ghost:",
+	  	"channel": "#api_test"
+	  },
+	  "Broken": {
+	  		"text": "As of %time%, %project%, is %status% <%url%|%label%>",
+	  		"attachments": [
+	  			{
+	  				"text":"This is attachments text",
+						"color":"#ff0000"
+	  			}
+	  		],
+	  		"username": "Provision",
+	  		"icon_emoji": ":ghost:",
+	  		"channel": "#api_test"
+	  	}
+	},
+
+	"watches" : [
+		{
+			"tags": ["^Openstack.*"],
+			"transitions": ["Success","Failed"],
+			"slackUrl": "_",
+			"channel": "#api_test"
+		}
+		,{
+			"tags": ["^Provision.*"],
+			"transitions": ["Success","Failed"],
+			"slackUrl": "_",
+			"channel": "#api_test"
+		}
+		,{
+			"tags": ["^Trig.*","aka"],
+			"transitions": ["Broken","Fixed"],
+			"slackUrl": "_",
+			"channel": "#api_test"
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+	"slackmessages" : {
+	  "Success": {
+	  	"text": "Success text"
+	  },
+	  "Failed": {
+	  	"text": "Failed text"
+	  },
+	  "Fixed": {
+	  	"text": "Fixed text"
+	  	  },
+	  "Broken": {
+	  		"text": "Broken text"
+	  	  	}
+	}
+
+}

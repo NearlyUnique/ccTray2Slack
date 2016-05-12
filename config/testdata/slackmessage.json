@@ -1,0 +1,13 @@
+{
+  "text": "New update from your build server",
+  "attachments": [
+  {
+    "title":"<%url%|%Project%-%label%>",
+    "text":"was %status% at %time%",
+    "color":"#ff0000"
+  }
+  ],
+  "username": "GO CD Integration",
+  "icon_emoji": ":building_construction:",
+  "channel": "#api_test"
+}

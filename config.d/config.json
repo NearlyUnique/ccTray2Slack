@@ -1,0 +1,73 @@
+{
+	"remotes" : ["http://localhost:8153/go/cctray.xml"],
+	"watches" : [
+		{
+			"tags": ["^alaska.*"],
+			"slackUrl": "https://hooks.slack.com/services/",
+			"transitions": ["Success","Failed"],
+			"channel": "#api_test",
+			"identifier":  "Alaska"
+		}
+		,{
+			"tags": ["CustomerRepoTest","crewplace-buildenv"],
+			"slackUrl": "https://hooks.slack.com/services/",
+			"transitions": ["Broken","Fixed"],
+			"channel": "#api_test",
+			"identifier":  "TEST"
+		}
+	],
+	"slackmessages" : {
+		"Fixed" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:"
+		},
+		"Broken" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:"
+		},
+		"Success" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:"
+				},
+		"Failed" :
+		{
+		  "text": "New update from your build-server",
+		  "attachments": [
+		  {
+		    "title":"<%url%|%Project%-%label%>",
+		    "text":"was %status% at %time%",
+		    "color":"#ff0000"
+		  }
+		  ],
+		  "username": "GO CD Integration",
+		  "icon_emoji": ":building_construction:"
+		}
+	}
+}

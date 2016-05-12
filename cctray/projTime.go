@@ -1,17 +1,17 @@
-package main
+package cctray
 
 import (
 	"encoding/xml"
 	"time"
 )
 
-type projTime struct {
+type ProjTime struct {
 	time.Time
 }
 
-func (pt *projTime) UnmarshalXMLAttr(attr xml.Attr) error {
+func (pt *ProjTime) UnmarshalXMLAttr(attr xml.Attr) error {
 	if parse, e := time.Parse("2006-01-02T15:04:05", attr.Value); e == nil {
-		*pt = projTime{parse}
+		*pt = ProjTime{parse}
 	} else {
 		return e
 	}

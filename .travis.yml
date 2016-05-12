@@ -1,0 +1,17 @@
+language: go
+go:
+- '1.5'
+install:
+- go get -t -v ./...
+- go test -v ./...
+- go build -o bin/ccTray2Slack -v .
+deploy:
+  provider: releases
+  clean_up: false
+  skip_cleanup: true
+  file: bin/ccTray2Slack
+  api_key:
+    secure: "+NA52E7wFrgy5Bo7dAFKgDtSBhOA6T//+Xh5jCch48PmEFgNj9dKutr4p1YIzxt7WqUVaK7XgJ5sA2qCGnaB4MxsDJV8FhdMq5f5GKXWawwC4tCz809oI9Nek3Xe7llTcL9/2YwUunD2OTjtkC+N/+P5FQb+WNZJRcOq16xbmLKRnWExfZFFbW356o+UTYgX5efXiKrx/hvNP6yipzPR4ZWpSGUm7oXQBOL1FIdvXVW0BsT23oe37KlHZ9jxxfjVRgSfYQNUU1MNZmesBYfCEsS4Jt3IKe8rbzICVbirF0JYiq6j1T9E4RX5h6ehL719ofOaaYMN3jWBymicCTsq0Vh3jBOS0UTkhAEmVZcr9agh/K395Sa6mLC9URZcWTi86pY58fQqOgd8C0xU2vu/6nLzrNYLz3+wohvBeAu9oGdikDXYN8pEMOLL9Ls3ISPWGUYFj2ruDUGNfAfyIPoJLvmEGv6TnukF7ZdTrIXjU92NQUNzbsL/l/kOwXOI69iszZdLAaWLuvAXPmbmZvqb7Vx2HI4KnPbIVfB7hQBfQAFe30zdIUyT1qY5DhBzulrVB1wepq5BztaWdxl0jPmCMRIYMhzdoWqiMugONEIx6yd27YMF/xekdmckf07Av3YOMd+g46q3wmtmQlH9ZKFBxOce419PznRxjR/2MjIk0fM="
+  on:
+    tags: true
+    repo: christer79/ccTray2Slack

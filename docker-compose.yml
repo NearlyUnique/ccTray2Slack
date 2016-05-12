@@ -1,0 +1,10 @@
+cctray_to_slack:
+  build: .
+  volumes:
+    - ./config.d:/root/config
+    - ./log:/root/log
+  environment:
+    - USERNAME=user
+    - PASSWORD=password
+    - PORT=8888
+    - LOGFILE=/root/log/ccTray2Slack.log
